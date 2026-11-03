@@ -21,7 +21,7 @@
   <script>
 {{SUN_SCRIPT}}
   </script>
-  <link rel="icon" href="{{ROOT}}assets/images/logo.svg" type="image/svg+xml">
+  <link rel="icon" href="{{ROOT}}assets/images/{{FAVICON}}" type="image/svg+xml">
   <link rel="stylesheet" href="{{ROOT}}assets/css/style.css">
   <link rel="stylesheet" href="{{ROOT}}assets/css/fields.css">
   <script src="{{ROOT}}assets/js/main.js" defer></script>
@@ -32,9 +32,8 @@
 
   <header class="site-header">
     <div class="container header-inner">
-      <a class="brand" href="{{HOME_HREF}}">
-        <img src="{{ROOT}}assets/images/logo.svg" alt="" width="32" height="32">
-        <span>{{SITE_NAME}}<small lang="{{OTHER_LANG}}">{{SITE_NAME_OTHER}}</small></span>
+      <a class="brand" href="{{HOME_HREF}}">{{BRAND_LOGO}}
+        <span class="wordmark"><span lang="en">{{WORDMARK_EN}}</span><small lang="zh-Hans">{{WORDMARK_ZH}}</small></span>
       </a>
       <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav">{{MENU}}</button>
       <nav id="site-nav" class="site-nav" aria-label="{{NAV_LABEL}}">
@@ -56,8 +55,10 @@
       <div class="container today-inner">
         <p class="today-info" aria-live="polite" style="margin:0">
           <span data-today-date></span>
+          <span data-today-term></span>
           <span data-today-place hidden></span>
           <span data-today-sun hidden></span>
+          <span data-today-moon class="today-moon"></span>
           <span><button type="button" class="text-btn" data-locate data-label-on="{{LOCATE_OFF}}" data-label-off="{{LOCATE_ON}}">{{LOCATE_ON}}</button></span>
         </p>
         <div class="theme-switch">

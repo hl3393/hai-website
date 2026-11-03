@@ -175,9 +175,11 @@ a.tag, .filters-summary, .footer-grid a {
   display: flex; align-items: center; gap: var(--s3); min-height: var(--tap);
   text-decoration: none; color: var(--color-text); line-height: 1.15;
 }
-.brand img { width: var(--s6); height: var(--s6); flex-shrink: 0; }
-.brand span { font-weight: 600; font-size: var(--t-16); letter-spacing: -0.01em; }
-.brand small { display: block; font-weight: 400; font-size: var(--t-12); letter-spacing: 0; color: var(--color-muted); }
+.brand-logo { width: var(--s6); height: var(--s6); flex-shrink: 0; }
+/* Wordmark: the English name, with the Chinese name below */
+.wordmark { display: flex; flex-direction: column; gap: 2px; }
+.wordmark > span { font-weight: 600; font-size: var(--t-16); letter-spacing: -0.01em; }
+.wordmark small { font-weight: 400; font-size: var(--t-12); letter-spacing: 0.08em; color: var(--color-muted); }
 .brand:hover { color: var(--color-text); }
 
 .nav-toggle {
@@ -503,6 +505,10 @@ p.placeholder, div.placeholder, li.placeholder { padding: var(--s1) var(--s2); }
 .today-info { display: flex; flex-wrap: wrap; align-items: center; gap: var(--s1) var(--s4); color: var(--footer-muted); }
 .today-info > span:not(:empty) + span:not(:empty)::before { content: "·"; margin-right: var(--s4); color: var(--footer-line); }
 .today-info [hidden] { display: none; }
+.today-moon { display: inline-flex; align-items: center; gap: var(--s2); }
+.moon { width: var(--s4); height: var(--s4); flex-shrink: 0; }
+.moon-disc { fill: none; stroke: currentColor; stroke-opacity: 0.5; }
+.moon-lit { fill: currentColor; }
 .today strong { color: var(--footer-text); font-weight: 500; }
 .today .text-btn { color: var(--footer-text); font-size: var(--t-14); }
 
@@ -549,7 +555,7 @@ p.placeholder, div.placeholder, li.placeholder { padding: var(--s1) var(--s2); }
   --color-placeholder-bg: #2c3443; --color-placeholder-border: #7d8aa0;
   --header-bg: #1b1e25; --sky-low: #1b1e25; --shadow: rgba(0, 0, 0, 0.6);
 }
-:root[data-theme="night"] .brand img { filter: brightness(1.6); }
+:root[data-theme="night"] .brand-logo { filter: brightness(1.6); }
 
 /* Without JavaScript, still respect the system's dark mode */
 @media (prefers-color-scheme: dark) {

@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <!-- Temporary favicon: the letter H. Replace when the real logo is ready (see README). -->
+  <rect width="64" height="64" rx="14" fill="#FAF8F4"/>
+  <path fill="#2B2A28" d="M19 16h7v13h12V16h7v32h-7V35H26v13h-7z"/>
+</svg>

@@ -465,6 +465,13 @@ function render({ lang, rel, depth, title, description, navKey, content, ogType,
     HOME_HREF: `${root}${prefix(lang)}index.html`,
     SITE_NAME: esc(ui.siteName),
     SITE_NAME_OTHER: esc(ui.siteNameOther),
+    // Header wordmark, and the logo if one is set in site.json ("brand" → "logo")
+    WORDMARK_EN: esc(site.brand.wordmark.en),
+    WORDMARK_ZH: esc(site.brand.wordmark.zh),
+    BRAND_LOGO: site.brand.logo
+      ? `\n        <img class="brand-logo" src="${root}assets/images/${esc(site.brand.logo)}" alt="" width="32" height="32">`
+      : "",
+    FAVICON: esc(site.brand.favicon || "favicon.svg"),
     OTHER_LANG: site.ui[other].htmlLang,
     MENU: esc(ui.menu),
     NAV_LABEL: esc(ui.navLabel),

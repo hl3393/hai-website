@@ -420,53 +420,36 @@ surrounding lines (no comma after the last item in a list).
 
 ## 7. Look and feel
 
-Colors and fonts are at the top of `static/assets/css/style.css` (`:root`).
-The logo is `static/assets/images/logo.svg` (a placeholder; replace it with
-the same file name). The site uses fonts already installed on readers'
-devices, with no Google Fonts or trackers, so it loads quickly and also works
-in mainland China.
+Colours, spacing and fonts are at the top of `static/assets/css/style.css`
+(`:root`). The site uses fonts already installed on readers' devices, with no
+Google Fonts or trackers, so it loads quickly and also works in mainland China.
 
-### Time-of-day themes, sun and weather
+### How to add the logo later
 
-The site's colours follow the real sun where the visitor is:
+For now the header shows only the wordmark, **Human Alignment Institute**
+with **人类对齐研究院** below, and the browser tab shows a temporary "H"
+icon (`static/assets/images/favicon.svg`). The old placeholder logo is kept
+at `static/assets/images/logo.svg` but isn't shown.
 
-| Theme | When | Look |
-|---|---|---|
-| Sunrise | 1 h before to 1.5 h after sunrise | soft apricot rising from the bottom of the screen |
-| Day | daytime | the neutral near-white design (default) |
-| Sunset | 1.5 h before to 1 h after sunset | warm amber / rose-grey |
-| Night | the rest of the night | dark charcoal-indigo |
+When the real logo is ready:
 
-**How the site knows where the visitor is, without asking:** it reads the
-browser's time zone (e.g. `America/New_York`) and looks up a representative
-city in a table (`ZONES` in `templates/sun.js`). Sunrise and sunset are then
-calculated in the browser with the standard sunrise equation. If the time
-zone isn't in the table, rough sunrise/sunset hours by month are used.
+1. Save it in `static/assets/images/`, ideally as a square SVG (a PNG of at
+   least 128×128 pixels also works), e.g. `logo.svg`.
+2. Open `site.json` and fill in the logo's file name under `"brand"`:
+   ```json
+   "brand": {
+     "wordmark": { "en": "Human Alignment Institute", "zh": "人类对齐研究院" },
+     "logo": "logo.svg",
+     "favicon": "favicon.svg"
+   },
+   ```
+   That one line puts the logo in front of the wordmark on every page, in
+   both languages.
+3. To use the logo as the browser-tab icon too, also change `"favicon"` to
+   its file name (or replace `favicon.svg` with a new icon).
+4. Commit. The site rebuilds and the logo appears everywhere.
 
-**The "today" strip** at the top of the footer shows the date, the city with
-current weather (e.g. "New York · 8°C cloudy", from the free
-[Open-Meteo](https://open-meteo.com) service, no key needed), and today's
-sunrise and sunset. If the weather can't be loaded, that part simply stays
-hidden.
-
-**"Use my location":** the browser asks for the visitor's exact location
-**only when they click this button**, never automatically. If they agree,
-the exact coordinates are used for weather and sun times, and remembered on
-their device. "Use time-zone city" switches back. If they decline, nothing
-changes.
-
-**Appearance:** visitors can pick **Auto / Light / Dark** in the footer; the
-choice is remembered on their device. With no choice, a device set to dark
-mode gets the night theme.
-
-*Privacy note:* to show the weather, the visitor's browser sends the city's
-coordinates (or, if the visitor chose it, their own) to Open-Meteo. Nothing is
-sent to us.
-
-- Theme colours: the `THEMES` section at the end of `static/assets/css/style.css`.
-- Time zone → city table, sun calculation, fallback hours: `templates/sun.js`.
-- Weather wording (EN/ZH): `WEATHER` in `static/assets/js/main.js`.
-- Night-time field colours: `"nightColor"` for each field in `site.json`.
+To remove the logo again, set `"logo": ""`.
 
 ## 8. Deploying on Cloudflare Pages
 

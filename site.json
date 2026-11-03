@@ -2,6 +2,12 @@
   "domain": "https://humanalignmentinstitute.org",
   "email": "info@humanalignmentinstitute.org",
 
+  "brand": {
+    "wordmark": { "en": "Human Alignment Institute", "zh": "人类对齐研究院" },
+    "logo": "",
+    "favicon": "favicon.svg"
+  },
+
   "fields": {
     "education": { "en": "Education",                      "zh": "教育",           "element": "Wood 木",  "color": "#6E7F4E", "tagColor": "#6A7A4B", "shape": "tall-rectangle", "nightColor": "#A9BA84" },
     "arts":      { "en": "Arts & Humanities",              "zh": "艺术与人文",     "element": "Fire 火",  "color": "#A6463A", "shape": "triangle", "nightColor": "#E3907F" },

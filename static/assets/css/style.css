@@ -315,7 +315,8 @@ a.tag:hover { background: var(--color-tint); color: var(--color-text); }
 .tag--field { background: var(--field-tag); color: var(--field-tag-text); border-color: transparent; font-weight: 600; }
 a.tag--field:hover { background: var(--field-tag); color: var(--field-tag-text); text-decoration: underline; }
 .mark { width: 0.75em; height: 0.75em; flex-shrink: 0; fill: currentColor; }
-.tag--field .mark { color: currentColor; }
+/* Inside a filled tag the mark takes the tag's text colour (in every theme) */
+:root .tag.tag--field .mark { color: currentColor; }
 .tag--sample { background: var(--color-placeholder-bg); border: 1px dashed var(--color-placeholder-border); }
 
 /* ---------- Voices ---------- */
@@ -373,7 +374,7 @@ html[lang="zh-Hans"] .filter-label { letter-spacing: 0.15em; }
 }
 .filter-btn:hover { border-color: var(--color-primary); color: var(--color-primary); }
 .filter-btn[aria-pressed="true"] { background: var(--color-primary); border-color: var(--color-primary); color: var(--color-on-primary); }
-.filter-btn[aria-pressed="true"] .mark { color: var(--color-on-primary); }
+:root .filter-btn[aria-pressed="true"] .mark { color: var(--color-on-primary); }
 .filter-empty { padding: var(--s7) 0; color: var(--color-muted); text-align: center; }
 
 /* ---------- Single piece: a quiet, bright room for reading ---------- */
@@ -447,6 +448,12 @@ html[lang="zh-Hans"] .question-list li { letter-spacing: 0; }
   content: counter(q, decimal-leading-zero); position: absolute; left: 0; top: calc(var(--s5) + 0.25em);
   font-size: var(--t-14); font-weight: 600; color: var(--color-muted); letter-spacing: 0.04em;
 }
+/* Our marks: the Five Elements list */
+.marks-list { list-style: none; padding: 0; margin: var(--s6) 0; }
+.marks-list li { display: flex; gap: var(--s5); align-items: flex-start; padding: var(--s5) 0; border-top: var(--hairline); }
+.marks-list li:last-child { border-bottom: var(--hairline); }
+.marks-list p { margin: 0; }
+.mark--lg { width: var(--s6); height: var(--s6); margin-top: 0.15em; }
 .founder { display: flex; gap: var(--s6); align-items: flex-start; }
 .founder .avatar { width: 112px; height: 112px; }
 .founder h2 { margin-bottom: var(--s4); }

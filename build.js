@@ -290,9 +290,13 @@ function pageUrl(lang, rel) {
    Each field in site.json has a "shape" (circle, triangle, square,
    half-circle, bar) and a "color". */
 const SHAPES = {
-  circle: '<circle cx="6" cy="6" r="5"/>',
+  // Five Elements (五行): wood, fire, earth, metal, water
+  "tall-rectangle": '<rect x="3.5" y="0.5" width="5" height="11"/>',
   triangle: '<path d="M6 1 11 10.5H1Z"/>',
   square: '<rect x="1.5" y="1.5" width="9" height="9"/>',
+  circle: '<circle cx="6" cy="6" r="5"/>',
+  wave: '<path d="M.5 4.6C2.2 2.6 4 2.6 6 4.6s3.8 2 5.5 0v3.3c-1.7 2-3.5 2-5.5 0s-3.8-2-5.5 0Z"/>',
+  // also available
   "half-circle": '<path d="M1 9a5 5 0 0 1 10 0Z"/>',
   bar: '<rect x="0.5" y="4" width="11" height="4"/>',
 };
@@ -541,7 +545,9 @@ for (const lang of LANGS) {
       EMAIL: () => esc(site.email),
       ROOT: () => root,
     };
-    const content = body.replace(/\{\{([A-Z_]+)\}\}/g, (all, key) => (tokens[key] ? tokens[key]() : all));
+    const content = body
+      .replace(/\{\{MARK:([a-z-]+)\}\}/g, (all, f) => (site.fields[f] ? fieldMark(f, "mark--lg") : all))
+      .replace(/\{\{([A-Z_]+)\}\}/g, (all, key) => (tokens[key] ? tokens[key]() : all));
     const otherExists = fs.existsSync(path.join(ROOT_DIR, "pages", lang === "en" ? "zh" : "en", file));
     write(
       prefix(lang) + file,

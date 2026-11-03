@@ -29,7 +29,7 @@ high-end hi-fi speaker.
 
 | Principle | What it means here | Where it lives |
 |---|---|---|
-| **Calm confidence** | No decoration for its own sake. A few memorable signatures instead of many effects: the large hero question, the field shapes. | `pages/*/index.html`, `site.json` (shapes) |
+| **Calm confidence** | No decoration for its own sake. A few memorable signatures instead of many effects: the large hero question, the Five Elements field marks. | `pages/*/index.html`, `site.json` (shapes) |
 | **Hide complexity** | Minimal navigation (the logo is "Home"); secondary things tucked away: filters fold behind one **Filter** control, Appearance and the "today" strip live in the footer. Each page shows the most important thing first. | `templates/layout.html`, `build.js` |
 | **Scandinavian light and space** | Generous whitespace, light surfaces, a comfortable line length (`--measure`, about 65–75 characters) and line height. Reading should feel like sitting in a quiet, bright room. | `style.css` `:root` |
 | **Warmth (wood)** | Warm near-white surfaces. Very occasionally, one large block in pale oak `#E9E0D2` (`.section--oak`, `.callout--oak`), at most one per page. Never wood-grain images. | `style.css` |
@@ -401,8 +401,13 @@ carry a yellow "Sample" label. Delete those files once real pieces are in.
 - **Email address:** change `"email"`.
 - **Add a field** (e.g. Health): add a line inside `"fields"`:
   `"health": { "en": "Health", "zh": "健康", "color": "#4F6B73", "shape": "circle" },`.
-  Each field has a colour and a small geometric mark. Shapes available:
-  `circle`, `triangle`, `square`, `half-circle`, `bar`. For a light colour,
+  Each field has a colour and a small geometric mark. The five fields follow
+  the Five Elements (五行): Education = Wood (`tall-rectangle`, moss green),
+  Arts & Humanities = Fire (`triangle`, madder red), Work & Everyday Life =
+  Earth (`square`, gardenia yellow), Public & Social Service = Metal (`circle`,
+  silver grey), Science, Technology & Industry = Water (`wave`, indigo). The
+  About page explains them ("Our marks"). Shapes available: `tall-rectangle`,
+  `triangle`, `square`, `circle`, `wave`, `half-circle`, `bar`. For a light colour,
   add `"darkText": true` so the tag text stays readable. It appears in the filters
   automatically, and pieces can use `field: health`. Roles (`"roles"`) and
   types (`"types"`) work the same way.

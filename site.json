@@ -3,11 +3,11 @@
   "email": "info@humanalignmentinstitute.org",
 
   "fields": {
-    "education": { "en": "Education",                      "zh": "教育",           "color": "#6E7F4E", "tagColor": "#6A7A4B", "shape": "circle", "nightColor": "#A9BA84" },
-    "arts":      { "en": "Arts & Humanities",              "zh": "艺术与人文",     "color": "#A6463A", "shape": "triangle", "nightColor": "#E3907F" },
-    "science":   { "en": "Science, Technology & Industry", "zh": "科学、技术与产业", "color": "#2F4A6D", "shape": "square", "nightColor": "#93AED6" },
-    "public":    { "en": "Public & Social Service",        "zh": "公共与社会服务", "color": "#6B4E37", "shape": "half-circle", "nightColor": "#C9A585" },
-    "everyday":  { "en": "Work & Everyday Life",           "zh": "劳动与日常生活", "color": "#D9A441", "darkText": true, "shape": "bar", "nightColor": "#E3B65C" }
+    "education": { "en": "Education",                      "zh": "教育",           "element": "Wood 木",  "color": "#6E7F4E", "tagColor": "#6A7A4B", "shape": "tall-rectangle", "nightColor": "#A9BA84" },
+    "arts":      { "en": "Arts & Humanities",              "zh": "艺术与人文",     "element": "Fire 火",  "color": "#A6463A", "shape": "triangle", "nightColor": "#E3907F" },
+    "everyday":  { "en": "Work & Everyday Life",           "zh": "劳动与日常生活", "element": "Earth 土", "color": "#D9A441", "darkText": true, "shape": "square", "nightColor": "#E3B65C" },
+    "public":    { "en": "Public & Social Service",        "zh": "公共与社会服务", "element": "Metal 金", "color": "#6E747C", "shape": "circle", "nightColor": "#B4BAC2" },
+    "science":   { "en": "Science, Technology & Industry", "zh": "科学、技术与产业", "element": "Water 水", "color": "#2F4A6D", "shape": "wave", "nightColor": "#93AED6" }
   },
 
   "roles": {

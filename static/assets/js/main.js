@@ -137,6 +137,9 @@
       });
     }
 
+    /* ---- 6. Gentle reveal of the page's blocks ---- */
+    setupReveal();
+
     /* ---- 5. Today strip ---- */
     var today = document.querySelector("[data-today]");
     if (today && theme) setupToday(today, theme);
@@ -365,6 +368,41 @@
     if (needed > room) bar.classList.add("is-compact");
   }
 
+
+  /* ---- Staggered reveal ----
+     Blocks already on screen unfold one after another (70ms apart, never
+     more than ~0.35s in total). Blocks further down rise in once as they
+     scroll into view. Only runs when <html> has the "motion" class
+     (set in <head>; never with reduced motion). */
+  function setupReveal() {
+    var root = document.documentElement;
+    if (!root.classList.contains("motion")) return;
+    clearTimeout(window.haiMotionFailsafe);
+    var STEP = 70, MAX = 350;
+    var items = Array.prototype.slice.call(document.querySelectorAll(
+      "main > section, main > article > *, .voice-grid > .voice-card, .grid > .card, .contributor-list > .contributor"));
+    var show = function (el, delay) {
+      el.style.setProperty("--rv-delay", delay + "ms");
+      el.classList.add("is-in");
+      // Afterwards, hand back the element's own transitions (hover, press)
+      setTimeout(function () { el.classList.add("rv-done"); el.style.removeProperty("--rv-delay"); }, delay + 600);
+    };
+    var viewH = window.innerHeight, first = 0;
+    var observer = new IntersectionObserver(function (entries) {
+      var batch = 0;
+      entries.forEach(function (e) {
+        if (!e.isIntersecting) return;
+        observer.unobserve(e.target);
+        show(e.target, Math.min(batch++ * STEP, 210));
+      });
+    }, { rootMargin: "0px 0px -6% 0px" });
+    items.forEach(function (el) {
+      var r = el.getBoundingClientRect();
+      if (el.hidden || r.height === 0) { el.classList.add("is-in", "rv-done"); return; }
+      if (r.top < viewH) show(el, Math.min(first++ * STEP, MAX)); // on screen now: unfold in order
+      else observer.observe(el);                                   // further down: on scroll
+    });
+  }
 
   /* ---- Narrow screens: the "Today" panel and the theme menu ----
      Each small button opens its panel; Escape or a click elsewhere closes it. */

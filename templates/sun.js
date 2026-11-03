@@ -134,6 +134,18 @@
   function apply() { document.documentElement.setAttribute("data-theme", resolve()); }
 
   document.documentElement.className += " js";
+
+  // Gentle motion (page unfolding, reveals) — only if the visitor hasn't
+  // asked for reduced motion. Content starts hidden from the first paint, so
+  // nothing flashes; main.js then reveals it. A safety timer shows
+  // everything anyway if main.js never runs.
+  var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if (!reduce && "IntersectionObserver" in window) {
+    document.documentElement.className += " motion" + ("onpagereveal" in window ? "" : " no-vt");
+    window.haiMotionFailsafe = setTimeout(function () {
+      document.documentElement.classList.remove("motion");
+    }, 2500);
+  }
   apply();
   window.haiTheme = { apply: apply, choice: choice, place: place, sun: sun };
 })();

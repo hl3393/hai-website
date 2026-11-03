@@ -1,7 +1,7 @@
-# Human Alignment Institution — Website
+# Human Alignment Institute — Website
 
-Website for **Human Alignment Institution (人类对齐研究院)**, a US nonprofit.
-Domain: **humanalignmentinstitution.org**
+Website for **Human Alignment Institute (人类对齐研究院)**, a US nonprofit.
+Domain: **humanalignmentinstitute.org**
 
 The site is plain HTML, CSS and a tiny bit of JavaScript. There is **no build
 step**: the files in this folder *are* the website. You edit a file, upload it
@@ -157,7 +157,7 @@ Copy one `<article class="card"> ... </article>` (or `<div class="card">`)
 block and paste it next to the others. The grid rearranges automatically.
 
 ### Change the email address
-Search all files for `info@humanalignmentinstitution.org` and replace it.
+Search all files for `info@humanalignmentinstitute.org` and replace it.
 
 ### Replace the logo
 Replace `assets/images/logo.svg` with your own logo **using the same file
@@ -199,7 +199,7 @@ stays readable.
    - Build output directory: **/** (or leave empty)
 5. Click **Save and Deploy**. You'll get a `*.pages.dev` address.
 6. In the project, open **Custom domains** → add
-   `humanalignmentinstitution.org` (and `www.humanalignmentinstitution.org`
+   `humanalignmentinstitute.org` (and `www.humanalignmentinstitute.org`
    if you like) and follow the instructions.
 
 ### Every update after that

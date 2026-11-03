@@ -1,5 +1,5 @@
 /* =========================================================
-   Human Alignment Institution — small helper script
+   Human Alignment Institute — small helper script
    ---------------------------------------------------------
    1. Opens/closes the menu on small screens.
    2. Fills in the current year in the footer.

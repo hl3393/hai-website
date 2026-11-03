@@ -1,0 +1,32 @@
+---
+# COPY THIS FILE to publish a new piece. Name the copy in lowercase with
+# dashes, e.g.  what-i-keep-for-myself.md  — that becomes the web address.
+# (Files that start with _ are ignored by the site.)
+#
+# title:    the title, exactly as it should appear
+# author:   the contributor's file name in content/contributors/ (without .md)
+# date:     year-month-day
+# field:    academia | arts | industry | education | everyday
+# type:     essay | blog | video
+# language: en | zh   (the language the piece is written in)
+# video:    only for videos: a YouTube or Vimeo link
+# summary:  optional one-sentence teaser for the cards
+# featured: optional, "true" puts it on the home page
+# draft:    optional, "true" hides it from the site
+title: My title
+author: jane-doe
+date: 2026-01-31
+field: education
+type: essay
+language: en
+video:
+summary:
+---
+
+Write the piece here. Leave an empty line between paragraphs.
+
+## A subheading
+
+*Italic*, **bold**, [a link](https://example.org).
+
+> A quotation.

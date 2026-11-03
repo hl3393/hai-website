@@ -1,240 +1,370 @@
 # Human Alignment Institute — Website
 
-Website for **Human Alignment Institute (人类对齐研究院)**, a US nonprofit.
-Domain: **humanalignmentinstitute.org**
+Website of **Human Alignment Institute (人类对齐研究院)** · **humanalignmentinstitute.org**
 
-The site is plain HTML, CSS and a tiny bit of JavaScript. There is **no build
-step**: the files in this folder *are* the website. You edit a file, upload it
-(or push it to GitHub), and the change goes live.
+> Human Alignment Institute gathers stories of how people across every field
+> live and work with AI. We ask not how much more efficient AI makes us, but
+> how we remain human alongside it.
+
+The site is bilingual (English / 中文) and curated: the editor invites pieces
+(essays, blog posts, videos) and publishes them. **Each piece is one simple
+text file.** Add a file, and the piece appears on the site automatically.
+
+**Jump to:** [How to publish a new piece (English)](#how-to-publish-a-new-piece) ·
+[如何发布新作品（中文）](#如何发布新作品)
 
 ---
 
-## 1. File structure
+## 1. How the site works (in one minute)
+
+You write **content** (simple text files). A small program, `build.js`, turns
+the content into a finished website in a folder called `public/`. Cloudflare
+Pages runs this program for you **every time you save a change to GitHub**, then
+publishes the result. You never have to edit the `public/` folder yourself.
+
+```
+  content/voices/my-piece.md   ──►   build.js   ──►   public/   ──►   the live website
+  (you write this)                  (automatic)      (automatic)
+```
+
+## 2. File structure
 
 ```
 hai-website/
-├── index.html          ← English Home page
-├── about.html          ← English About (mission & vision)
-├── research.html       ← English Research & Programs
-├── news.html           ← English News
-├── get-involved.html   ← English Get Involved
-├── contact.html        ← English Contact
+├── content/
+│   ├── voices/               ← ONE FILE PER PIECE (essay, blog or video)
+│   │   ├── _template.md      ← copy this to start a new piece
+│   │   ├── sample-essay.md   ← sample placeholders: replace or delete
+│   │   ├── sample-blog.md
+│   │   └── sample-video.md
+│   └── contributors/         ← ONE FILE PER AUTHOR
+│       ├── _template.md      ← copy this to add a new author
+│       └── sample-contributor-a.md …
 │
-├── zh/                 ← Chinese (中文) versions of the same six pages
-│   ├── index.html
-│   ├── about.html
-│   ├── research.html
-│   ├── news.html
-│   ├── get-involved.html
-│   └── contact.html
+├── pages/                    ← The fixed pages (text you can edit)
+│   ├── en/                   ← English: index (Home), voices, contributors, thaap, about, 404
+│   └── zh/                   ← Chinese: the same pages in 中文
 │
-├── assets/
-│   ├── css/style.css   ← All colors, fonts and layout
-│   ├── js/main.js      ← Mobile menu + footer year (you rarely need to touch this)
-│   └── images/logo.svg ← Logo and browser-tab icon (placeholder)
+├── static/                   ← Copied to the site as-is
+│   ├── assets/css/style.css  ← Colors, fonts, layout
+│   ├── assets/js/main.js     ← Mobile menu + Voices filters
+│   ├── assets/images/        ← Logo, and contributors/ for author photos
+│   ├── _headers              ← Security settings for Cloudflare
+│   └── robots.txt
 │
-├── 404.html            ← "Page not found" page
-├── _headers            ← Security settings read by Cloudflare Pages
-├── robots.txt          ← Instructions for search engines
-├── sitemap.xml         ← List of pages for search engines
-└── README.md           ← This file
+├── templates/layout.html     ← Header + footer around every page
+├── site.json                 ← Settings: email, fields, types, menu labels
+├── build.js                  ← The program that builds the site (don't need to touch)
+├── preview.js                ← Lets you preview the site on your computer
+└── package.json              ← Tells Cloudflare how to build
 ```
 
-**Key idea:** every English page has a Chinese twin with the *same file name*
-inside the `zh/` folder. The **中文 / English** button in the top menu simply
-links to the twin page. So when you change `about.html`, remember to make the
-matching change in `zh/about.html`.
+Files whose names start with `_` (like `_template.md`) are ignored by the site.
 
 ---
 
-## 2. Tools you need
+<a id="how-to-publish-a-new-piece"></a>
+## 3. How to publish a new piece (English)
 
-- A text editor. Free, beginner-friendly option: **Visual Studio Code**
-  (https://code.visualstudio.com). Windows Notepad also works in a pinch.
-  Don't use Word — it adds hidden formatting.
-- A web browser to preview your work.
+You can do all of this **in your web browser on github.com**, with nothing
+installed on your computer.
 
----
+### Step 1: Make sure the author exists
 
-## 3. Preview the site on your computer
+Open the folder `content/contributors/` on GitHub. Is there already a file for
+this author (for example `li-wei.md`)?
 
-1. Download or clone this repository to your computer.
-2. Open the folder and **double-click `index.html`**. It opens in your browser.
-3. Click around — all links between pages work offline.
-4. After editing a file, save it and press **Refresh** in the browser.
+- **Yes:** remember the file name without `.md` (e.g. `li-wei`). Go to step 2.
+- **No:** create one:
+  1. Click **Add file → Create new file**.
+  2. Name it after the person, lowercase with dashes:
+     `content/contributors/li-wei.md`
+  3. Paste this and fill it in:
+     ```
+     ---
+     name: Li Wei
+     name_zh: 李伟
+     field: education
+     photo: placeholder.svg
+     bio: Middle-school teacher in Chengdu who writes about classrooms and AI.
+     bio_zh: 成都的中学教师，关注课堂与 AI。
+     ---
+     ```
+  4. Click **Commit changes**.
 
-(The 404 page is the only one that looks unstyled when opened this way. That's
-expected; it works correctly once deployed.)
+  *Photo (optional):* open `static/assets/images/contributors/`, click
+  **Add file → Upload files**, upload a square photo (about 400×400 pixels),
+  e.g. `li-wei.jpg`. Then change the line to `photo: li-wei.jpg`.
 
----
+### Step 2: Create the piece
 
-## 4. Finding and replacing placeholder text
+1. Open `content/voices/` and click **Add file → Create new file**.
+2. Name the file in lowercase with dashes. **This becomes the web address.**
+   Example: `content/voices/what-i-keep-for-myself.md` becomes
+   `humanalignmentinstitute.org/pieces/what-i-keep-for-myself`.
+3. Paste this header at the very top and fill it in:
+   ```
+   ---
+   title: What I keep for myself
+   author: li-wei
+   date: 2026-11-15
+   field: education
+   type: essay
+   language: en
+   video:
+   summary: A teacher on the one part of her job she won't automate.
+   ---
+   ```
+4. Under the second `---` line, paste the text of the piece.
+   Leave an **empty line between paragraphs**.
+5. Click **Commit changes**. Wait 1–2 minutes and the piece is live: on the
+   Voices page, on the author's entry on the Contributors page, and (if it's
+   one of the 3 newest) on the Home page.
 
-All text that still needs real content is **highlighted in yellow** on the
-page and looks like this in the HTML:
+### What each header line means
 
-```html
-<span class="placeholder">[PLACEHOLDER: State your mission in one or two sentences.]</span>
-```
-
-In Chinese pages it says `[占位文字：...]` (or `[占位：...]` in the footer).
-
-**To find them all:** in VS Code press `Ctrl+Shift+F` (Mac: `Cmd+Shift+F`) and
-search for `placeholder`. You'll see every spot in every file.
-
-**To replace one**, change the whole thing — including the `<span>` tags — to
-your real text.
-
-Before:
-```html
-<p><span class="placeholder">[PLACEHOLDER: State your mission in one or two sentences.]</span></p>
-```
-After:
-```html
-<p>We advance research that keeps technology aligned with human values.</p>
-```
-
-Some placeholders sit on a whole element instead of a `<span>`, for example:
-```html
-<li class="placeholder">[PLACEHOLDER: Author(s). “Title.” Venue, Year.]</li>
-```
-For those, write your text and delete ` class="placeholder"`:
-```html
-<li>Doe, J. “Values in Machines.” Journal of Ethics, 2026.</li>
-```
-
-**Rule of thumb:** when no yellow boxes remain on the page, it's finished.
-
----
-
-## 5. How a page is organized
-
-Every page has the same three parts, marked with comments:
-
-```html
-<!-- ===== HEADER (same on every page) ===== -->      logo + menu
-<!-- ===== MAIN CONTENT (edit this part) ===== -->     the page's own content
-<!-- ===== FOOTER (same on every page) ===== -->      bottom of the page
-```
-
-You'll mostly edit the **MAIN CONTENT** part.
-
-The header and footer are copied into all 12 pages (there's no build tool to
-share them). If you change something there — for example the email address in
-the footer — use VS Code's **Find and Replace in files**
-(`Ctrl+Shift+H` / `Cmd+Shift+H`) to change it everywhere at once.
-
-### A few HTML basics
-
-| You write | You get |
+| Line | What to write |
 |---|---|
-| `<h2>Title</h2>` | A section heading |
-| `<p>Some text.</p>` | A paragraph |
-| `<a href="contact.html">Contact us</a>` | A link to another page |
-| `<a href="https://example.org">Example</a>` | A link to another website |
-| `<strong>bold</strong>` | **bold** |
-| `<ul><li>One</li><li>Two</li></ul>` | A bulleted list |
-| `&amp;` | The `&` character (HTML needs it written this way) |
+| `title:` | The title, exactly as it should appear |
+| `author:` | The author's file name in `content/contributors/`, without `.md` |
+| `date:` | Year-month-day, e.g. `2026-11-15` (newest pieces are shown first) |
+| `field:` | `academia`, `arts`, `industry`, `education` or `everyday` |
+| `type:` | `essay`, `blog` or `video` |
+| `language:` | The language the piece is written in: `en` or `zh` |
+| `video:` | Videos only: a YouTube or Vimeo link, e.g. `https://www.youtube.com/watch?v=…` or `https://vimeo.com/123456789` |
+| `summary:` | *Optional.* One sentence shown on the cards. If empty, the first lines of the text are used |
+| `featured:` | *Optional.* `true` pins the piece to the Home page |
+| `draft:` | *Optional.* `true` hides the piece until you're ready |
 
-Every opening tag like `<p>` needs a matching closing tag `</p>`.
+### For a video
+
+Set `type: video` and paste the YouTube or Vimeo link after `video:`. The
+player appears at the top of the page automatically. Any text you write below
+the header appears under the video (an introduction or a transcript).
+
+### Formatting the text (Markdown)
+
+| You type | You get |
+|---|---|
+| An empty line | A new paragraph |
+| `## A subheading` | A subheading |
+| `*italic*` | *italic* |
+| `**bold**` | **bold** |
+| `> A quotation` | An indented quotation |
+| `[link text](https://example.org)` | A link |
+| `---` on its own line (in the text) | A section break (· · ·) |
+
+### Each piece appears in both languages of the site
+
+Every piece is shown on both the English and the Chinese site. Its text
+stays in the language it was written in, and a small "Chinese" or "英文" label
+tells readers which language that is.
+
+### If something goes wrong
+
+If a header line is wrong (for example a misspelled field), the build stops
+and **the old version of the site stays online**, so nothing breaks for
+visitors. To see why: in Cloudflare open **Workers & Pages → your project →
+Deployments**, click the failed deployment, and read the log. It names the
+file and the problem in plain words, e.g.:
+
+```
+✗ The site was NOT built. Please fix these problems:
+  • content/voices/my-piece.md: field "music" is unknown. Use one of: academia, arts, industry, education, everyday
+```
+
+Fix the file on GitHub, commit again, and the site rebuilds.
+
+### Editing or removing a piece
+
+- **Edit:** open the file on GitHub, click the pencil ✏️, change it, commit.
+- **Hide temporarily:** add the line `draft: true` to the header.
+- **Remove:** open the file, click **⋯ → Delete file**, commit.
 
 ---
 
-## 6. Common tasks
+<a id="如何发布新作品"></a>
+## 4. 如何发布新作品（中文）
 
-### Add a news item
-1. Open `news.html`.
-2. Copy one complete block from `<li class="news-item">` down to its `</li>`.
-3. Paste it at the **top** of the list (newest first).
-4. Change the date in **both** places — the `datetime="2026-03-15"` part
-   (format: year-month-day) and the visible text `March 15, 2026`.
-5. Change the headline and summary.
-6. Do the same in `zh/news.html` in Chinese (date format: `2026年3月15日`).
-7. Optionally update the "Latest news" box on the two home pages.
+以下操作都可以**直接在 github.com 网页上完成**，电脑上无需安装任何软件。
 
-### Add a card (research area, program, value…)
-Copy one `<article class="card"> ... </article>` (or `<div class="card">`)
-block and paste it next to the others. The grid rearranges automatically.
+### 第一步：确认作者已存在
 
-### Change the email address
-Search all files for `info@humanalignmentinstitute.org` and replace it.
+在 GitHub 上打开文件夹 `content/contributors/`，看看是否已有该作者的文件（例如 `li-wei.md`）。
 
-### Replace the logo
-Replace `assets/images/logo.svg` with your own logo **using the same file
-name**. A square SVG works best. If you only have a PNG, save it as
-`assets/images/logo.png` and replace `logo.svg` with `logo.png` in all pages
-(Find and Replace in files).
+- **有：**记下文件名（去掉 `.md`，例如 `li-wei`），进入第二步。
+- **没有：**新建一个：
+  1. 点击 **Add file → Create new file**。
+  2. 用英文小写字母和连字符命名，例如：`content/contributors/li-wei.md`
+  3. 粘贴以下内容并填写：
+     ```
+     ---
+     name: Li Wei
+     name_zh: 李伟
+     field: education
+     photo: placeholder.svg
+     bio: Middle-school teacher in Chengdu who writes about classrooms and AI.
+     bio_zh: 成都的中学教师，关注课堂与 AI。
+     ---
+     ```
+     （`name` 和 `bio` 显示在英文网站上，`name_zh` 和 `bio_zh` 显示在中文网站上。）
+  4. 点击 **Commit changes** 保存。
 
-### Change the colors
-Open `assets/css/style.css`. The colors are listed at the very top under
-`:root`, e.g. `--color-primary: #1f5f6b;`. Change the hex code and every
-button, link and highlight updates. Keep text dark on light backgrounds so it
-stays readable.
+  *照片（可选）：*打开 `static/assets/images/contributors/`，点击 **Add file → Upload files**，
+  上传一张方形照片（约 400×400 像素），例如 `li-wei.jpg`，然后把 `photo:` 一行改为 `photo: li-wei.jpg`。
 
-### Add a new page
-1. Copy an existing page, e.g. `about.html` → `team.html`, and also
-   `zh/about.html` → `zh/team.html`.
-2. Edit the `<title>`, `<meta name="description">` and the `canonical` /
-   `alternate` links in the `<head>` of both copies (change `about` to `team`).
-3. Replace the MAIN CONTENT.
-4. In the new pages, move `aria-current="page"` to the right menu item (or
-   remove it if the page isn't in the menu).
-5. If it should appear in the menu, add a `<li>` line to the menu **and** the
-   footer "Explore" list in all pages.
-6. Add the new page to `sitemap.xml`.
+### 第二步：新建作品文件
+
+1. 打开 `content/voices/`，点击 **Add file → Create new file**。
+2. 用英文小写字母和连字符为文件命名，**文件名就是网址**。
+   例如 `content/voices/what-i-keep-for-myself.md` 的网址是
+   `humanalignmentinstitute.org/pieces/what-i-keep-for-myself`。
+   （文件名请勿使用中文或空格。）
+3. 在文件最上方粘贴以下“文件头”并填写：
+   ```
+   ---
+   title: 我留给自己的东西
+   author: li-wei
+   date: 2026-11-15
+   field: education
+   type: essay
+   language: zh
+   video:
+   summary: 一位教师谈她不愿交给 AI 的那部分工作。
+   ---
+   ```
+4. 在第二条 `---` 下面粘贴正文。**段落之间空一行。**
+5. 点击 **Commit changes**。等待 1–2 分钟，作品就会自动出现在“声音”页面、作者页面中该作者的条目下；如果是最新的 3 篇之一，也会出现在首页。
+
+### 文件头各行的含义
+
+| 行 | 填写内容 |
+|---|---|
+| `title:` | 标题，按希望显示的样子填写 |
+| `author:` | 作者在 `content/contributors/` 中的文件名（去掉 `.md`） |
+| `date:` | 年-月-日，例如 `2026-11-15`（最新的作品排在最前） |
+| `field:` | 领域：`academia`（学术）、`arts`（艺术）、`industry`（产业）、`education`（教育）、`everyday`（日常生活） |
+| `type:` | 类型：`essay`（随笔）、`blog`（博客）、`video`（视频） |
+| `language:` | 作品所用语言：`en`（英文）或 `zh`（中文） |
+| `video:` | 仅视频需要：YouTube 或 Vimeo 链接 |
+| `summary:` | *可选。*卡片上显示的一句话简介；留空则自动截取正文开头 |
+| `featured:` | *可选。*填 `true` 可将作品固定显示在首页 |
+| `draft:` | *可选。*填 `true` 可暂时隐藏作品 |
+
+**注意：**冒号 `:` 必须是英文半角冒号，`field`、`type`、`language` 的值必须用上表中的英文单词。
+
+### 发布视频
+
+把 `type:` 设为 `video`，在 `video:` 后粘贴 YouTube 或 Vimeo 链接，页面顶部就会自动出现播放器。文件头下面的文字会显示在视频下方，可以写简介或文字稿。
+
+（提示：YouTube 和 Vimeo 在中国大陆通常无法直接访问。如果读者主要在国内，可在正文中另附 B 站等平台的链接。）
+
+### 正文排版（Markdown）
+
+| 输入 | 效果 |
+|---|---|
+| 空一行 | 新段落 |
+| `## 小标题` | 小标题 |
+| `*斜体*` | *斜体* |
+| `**加粗**` | **加粗** |
+| `> 引文` | 缩进的引文 |
+| `[链接文字](https://example.org)` | 链接 |
+| 单独一行 `---`（在正文中） | 分节符（· · ·） |
+
+### 出错了怎么办？
+
+如果文件头写错（例如领域拼错），网站不会更新，**线上仍保留旧版本**，访客不受影响。查看原因：在 Cloudflare 打开 **Workers & Pages → 项目 → Deployments**，点击失败的那次部署并查看日志，日志会写明是哪个文件、什么问题。在 GitHub 上改正后再次提交即可。
+
+### 修改或删除作品
+
+- **修改：**在 GitHub 上打开文件，点击铅笔图标 ✏️，修改后提交。
+- **暂时隐藏：**在文件头中加一行 `draft: true`。
+- **删除：**打开文件，点击 **⋯ → Delete file** 并提交。
 
 ---
 
-## 7. Deploying on Cloudflare Pages
+## 5. Editing the fixed pages
 
-### First-time setup
-1. Push this repository to GitHub (it's already there if you're reading this
-   on GitHub).
-2. Log in to https://dash.cloudflare.com → **Workers & Pages** →
-   **Create** → **Pages** → **Connect to Git**.
-3. Choose this repository and the **main** branch.
-4. Build settings:
+The Home, Voices, Contributors, THAAP and About pages live in `pages/en/` and
+`pages/zh/`. Each file starts with a short header (`title`, `description`)
+and then plain HTML. Edit the English and Chinese versions together.
+
+Some words in double braces are filled in automatically, so keep them:
+
+| Token | Becomes |
+|---|---|
+| `{{LATEST_VOICES}}` | The 3 newest (or `featured`) pieces, on Home |
+| `{{ALL_VOICES}}` | All pieces with the Field / Type filters, on Voices |
+| `{{CONTRIBUTORS}}` | The list of authors and their pieces, on Contributors |
+| `{{EMAIL}}` | The email address from `site.json` |
+
+**Placeholders:** text still to be written is highlighted in yellow and looks
+like `<span class="placeholder">[PLACEHOLDER: …]</span>` (Chinese:
+`[占位文字：…]`). Replace the whole `<span>…</span>` with your text. Search the
+project for `placeholder` to find them all. They are on the About page
+(founder, address), THAAP page (details), and in `site.json` (the footer's
+nonprofit-status line). Only mention 501(c)(3) status or tax-deductible
+donations once confirmed.
+
+**Sample content:** the three sample pieces and three sample contributors
+carry a yellow "Sample" label. Delete those files once real pieces are in.
+
+## 6. Settings in `site.json`
+
+- **Email address:** change `"email"`.
+- **Add a field** (e.g. Health): add a line inside `"fields"`:
+  `"health": { "en": "Health", "zh": "健康" },`. It appears in the filters
+  automatically, and pieces can use `field: health`.
+- **Menu labels, footer text:** under `"ui"` → `"en"` / `"zh"`.
+
+`site.json` is strict: keep the quotes and commas exactly as in the
+surrounding lines (no comma after the last item in a list).
+
+## 7. Look and feel
+
+Colors and fonts are at the top of `static/assets/css/style.css` (`:root`).
+The logo is `static/assets/images/logo.svg` (a placeholder; replace it with
+the same file name). The site uses fonts already installed on readers'
+devices, with no Google Fonts or trackers, so it loads quickly and also works
+in mainland China.
+
+## 8. Deploying on Cloudflare Pages
+
+**First-time setup (or update an existing project under Settings → Builds):**
+
+1. Cloudflare dashboard → **Workers & Pages → Create → Pages → Connect to Git**.
+2. Choose this repository, branch **main**.
+3. Build settings:
    - Framework preset: **None**
-   - Build command: *(leave empty)*
-   - Build output directory: **/** (or leave empty)
-5. Click **Save and Deploy**. You'll get a `*.pages.dev` address.
-6. In the project, open **Custom domains** → add
-   `humanalignmentinstitute.org` (and `www.humanalignmentinstitute.org`
-   if you like) and follow the instructions.
+   - Build command: **`npm run build`**
+   - Build output directory: **`public`**
+4. **Save and Deploy.** Then under **Custom domains** add
+   `humanalignmentinstitute.org`.
 
-### Every update after that
-Commit and push your changes to the `main` branch on GitHub. Cloudflare
-publishes the new version automatically within a minute or two.
+After that, every commit to `main` rebuilds and republishes the site
+automatically in 1–2 minutes. Pages are served without `.html`
+(e.g. `/about`), which is normal.
 
-You can also edit files directly on github.com: open the file, click the
-pencil icon, make your change, and click **Commit changes**.
+## 9. Previewing on your own computer (optional)
 
-Note: Cloudflare serves pages without `.html` at the end
-(e.g. `/about` instead of `/about.html`). That's normal; links still work.
+Only needed if you want to check changes before publishing.
 
----
+1. Install **Node.js** (LTS version) from https://nodejs.org.
+2. Open a terminal in this folder and run, once:
+   ```bash
+   npm install
+   ```
+3. Every time you want to preview:
+   ```bash
+   npm run preview
+   ```
+   then open http://localhost:8080 in your browser. Press `Ctrl+C` to stop.
 
-## 8. Before going public — checklist
+`npm run build` only builds the `public/` folder without starting the preview.
 
-- [ ] No yellow placeholder boxes left on any of the 12 pages
-- [ ] Email address confirmed to work
-- [ ] Nonprofit / 501(c)(3) wording in the footer is accurate (only mention
-      tax-exempt status or tax-deductible donations once it's confirmed)
-- [ ] Real logo in `assets/images/logo.svg`
-- [ ] English and Chinese pages say the same thing
-- [ ] Checked on a phone
+## 10. Accessibility
 
----
-
-## 9. Design notes
-
-- **No external fonts or trackers.** The site uses fonts already installed on
-  visitors' devices. This keeps it fast and means it loads reliably for
-  visitors in mainland China, where Google Fonts and similar services are
-  often blocked.
-- **Accessibility:** "skip to content" link, proper headings, visible keyboard
-  focus, `lang` attributes for each language, and a mobile menu that works
-  with the keyboard (Esc closes it). The menu also works with JavaScript
-  turned off.
-- **Search engines:** each page tells search engines about its other-language
-  twin (`hreflang` tags) so the right version shows up for each audience.
+Skip-to-content link, semantic headings, visible keyboard focus, correct
+`lang` attributes for English and Chinese text, keyboard-friendly menu (Esc
+closes it), filter buttons announced to screen readers, and everything
+(menu, all pieces) still works with JavaScript turned off.

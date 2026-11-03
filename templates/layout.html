@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<!--
+  LAYOUT TEMPLATE — wraps every page of the site.
+  Words in {{DOUBLE_BRACES}} are filled in automatically by build.js.
+  Menu labels and footer wording live in site.json.
+-->
+<html lang="{{HTML_LANG}}">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{FULL_TITLE}}</title>
+  <meta name="description" content="{{DESCRIPTION}}">
+  <link rel="canonical" href="{{CANONICAL}}">
+  <link rel="alternate" hreflang="en" href="{{URL_EN}}">
+  <link rel="alternate" hreflang="zh-Hans" href="{{URL_ZH}}">
+  <link rel="alternate" hreflang="x-default" href="{{URL_EN}}">
+  <meta property="og:title" content="{{FULL_TITLE}}">
+  <meta property="og:description" content="{{DESCRIPTION}}">
+  <meta property="og:type" content="{{OG_TYPE}}">
+  <meta property="og:url" content="{{CANONICAL}}">
+  <link rel="icon" href="{{ROOT}}assets/images/logo.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="{{ROOT}}assets/css/style.css">
+  <script src="{{ROOT}}assets/js/main.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">{{SKIP}}</a>
+
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="brand" href="{{HOME_HREF}}">
+        <img src="{{ROOT}}assets/images/logo.svg" alt="" width="40" height="40">
+        <span>{{SITE_NAME}}<small lang="{{OTHER_LANG}}">{{SITE_NAME_OTHER}}</small></span>
+      </a>
+      <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav">{{MENU}}</button>
+      <nav id="site-nav" class="site-nav" aria-label="{{NAV_LABEL}}">
+        <ul>
+{{NAV_ITEMS}}
+          <li class="lang-switch"><a href="{{SWITCH_HREF}}" hreflang="{{OTHER_LANG}}" lang="{{OTHER_LANG}}" title="{{SWITCH_TITLE}}">{{SWITCH_LABEL}}</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main">
+{{CONTENT}}
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div>
+          <p class="footer-name">{{SITE_NAME}}</p>
+          <p>{{TAGLINE}}</p>
+        </div>
+        <div>
+          <h2>{{FOOTER_EXPLORE}}</h2>
+          <ul>
+{{FOOTER_LINKS}}
+          </ul>
+        </div>
+        <div>
+          <h2>{{FOOTER_CONTACT}}</h2>
+          <p><a href="mailto:{{EMAIL}}">{{EMAIL}}</a></p>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>{{FOOTER_LEGAL}}</p>
+        <p>&copy; <span data-current-year>{{YEAR}}</span> {{COPYRIGHT}}</p>
+      </div>
+    </div>
+  </footer>
+</body>
+</html>

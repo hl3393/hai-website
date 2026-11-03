@@ -6,23 +6,36 @@
    ========================================================= */
 
 :root {
-  /* Colors — warm paper, ink, and a soft clay accent */
-  --color-bg: #faf6ef;          /* page background (warm paper) */
-  --color-surface: #fffdf8;     /* cards, header */
-  --color-text: #2f2a25;        /* main text (warm ink) */
-  --color-muted: #675d53;       /* secondary text */
-  --color-primary: #9b4a2e;     /* links, buttons (clay) */
-  --color-primary-dark: #7b3720;
-  --color-tint: #f3e9dc;        /* soft sand sections */
-  --color-sage: #e6ebe0;        /* soft green highlights */
-  --color-border: #e5dace;
-  --color-placeholder-bg: #fff3c4;
-  --color-placeholder-border: #c9a43c;
+  /* ---- Neutral interface (about 90% of every page) ---- */
+  --color-bg: #faf8f4;          /* page background: near-white warm */
+  --color-surface: #ffffff;     /* raised surfaces (filter bar, inputs) */
+  --color-tint: #f1eee8;        /* alternate sections and cards: light warm gray */
+  --color-text: #2b2a28;        /* body text and headings: charcoal */
+  --color-muted: #5e5a52;       /* secondary text */
+  --color-border: #ddd8cf;      /* borders and dividers: light stone */
+  --color-border-strong: #b9b2a6;
 
-  /* Field / type tag colors */
-  --tag-essay: #efe0d3;
-  --tag-blog: #e6ebe0;
-  --tag-video: #e4e4ef;
+  /* ---- Primary: ONLY for links, buttons and focus ---- */
+  --color-primary: #2f4a6d;     /* indigo */
+  --color-primary-dark: #1f3350;/* indigo hover */
+
+  /* ---- Field colors: ONLY on small field tags / thin card accents ---- */
+  --field-education: #6e7f4e;      /* moss green */
+  --field-education-tag: #6a7a4b;  /* a hair darker so white tag text passes WCAG AA */
+  --field-arts: #a6463a;           /* madder red */
+  --field-science: #2f4a6d;        /* indigo */
+  --field-public: #6b4e37;         /* walnut */
+  --field-everyday: #d9a441;       /* gardenia yellow (dark text on it) */
+
+  /* ---- Footer ---- */
+  --footer-bg: #2b2a28;
+  --footer-text: #f1eee8;
+  --footer-muted: #c9c4ba;
+  --footer-line: #45433f;
+
+  /* ---- Placeholder markers (to be replaced with real content) ---- */
+  --color-placeholder-bg: #eef0f3;
+  --color-placeholder-border: #8a94a3;
 
   /* Typography */
   --font-sans: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue",
@@ -92,8 +105,8 @@ a:hover { color: var(--color-primary-dark); text-decoration-thickness: 2px; }
 
 /* ---------- Header & navigation ---------- */
 .site-header {
-  background: var(--color-surface);
-  background: color-mix(in srgb, var(--color-surface) 92%, transparent);
+  background: var(--color-bg);
+  background: color-mix(in srgb, var(--color-bg) 94%, transparent);
   border-bottom: 1px solid var(--color-border);
   position: sticky; top: 0; z-index: 50;
   backdrop-filter: blur(6px);
@@ -118,7 +131,7 @@ a:hover { color: var(--color-primary-dark); text-decoration-thickness: 2px; }
   text-decoration: none; color: var(--color-text); font-size: 0.97rem;
 }
 .site-nav a:hover { background: var(--color-tint); }
-.site-nav a[aria-current] { background: var(--color-tint); color: var(--color-primary-dark); font-weight: 600; }
+.site-nav a[aria-current] { background: var(--color-tint); color: var(--color-text); font-weight: 600; }
 .lang-switch { margin-left: 0.5rem; }
 .site-nav .lang-switch a { border: 1px solid var(--color-border); font-size: 0.9rem; }
 
@@ -145,7 +158,7 @@ a:hover { color: var(--color-primary-dark); text-decoration-thickness: 2px; }
 
 .eyebrow {
   font-size: 0.82rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase;
-  color: var(--color-primary); margin-bottom: 0.6rem;
+  color: var(--color-muted); margin-bottom: 0.6rem;
 }
 html[lang="zh-Hans"] .eyebrow { letter-spacing: 0.18em; }
 
@@ -154,14 +167,14 @@ html[lang="zh-Hans"] .eyebrow { letter-spacing: 0.18em; }
 
 /* Home hero */
 .hero { padding: 5.5rem 0 5rem; border-bottom: 1px solid var(--color-border);
-  background: radial-gradient(ellipse at 85% 0%, var(--color-tint) 0%, transparent 60%), var(--color-bg); }
+  background: var(--color-bg); }
 .hero h1 { max-width: 18ch; }
 html[lang="zh-Hans"] .hero h1 { max-width: 14em; }
 
 .mission {
   font-family: var(--font-serif); font-size: clamp(1.2rem, 2.2vw, 1.45rem); line-height: 1.6;
   max-width: 40rem; color: var(--color-text);
-  border-left: 3px solid var(--color-primary); padding-left: 1.25rem;
+  border-left: 3px solid var(--color-border-strong); padding-left: 1.25rem;
 }
 .mission--small { font-size: 1.2rem; margin-bottom: 2.5rem; }
 
@@ -183,24 +196,28 @@ html[lang="zh-Hans"] .hero h1 { max-width: 14em; }
 /* Grids & cards */
 .grid { display: grid; gap: 1.5rem; grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr)); }
 .card, .callout {
-  background: var(--color-surface); border: 1px solid var(--color-border);
+  border: 1px solid var(--color-border);
   border-radius: var(--radius); padding: 1.75rem;
 }
 .card p:last-child, .callout p:last-child { margin-bottom: 0; }
-.callout { box-shadow: 0 1px 0 var(--color-border), 0 12px 30px -20px rgba(80, 50, 20, 0.35); }
+.callout { background: var(--color-tint); border-color: var(--color-tint); }
 
 .split { display: grid; gap: 2.5rem; align-items: start; }
 @media (min-width: 820px) { .split { grid-template-columns: 1fr 1fr; } }
+
+/* Cards are light warm gray; on gray sections they flip to the page color */
+.card, .voice-card, .contributor, .filters { background: var(--color-tint); }
+.section--tint .card, .section--tint .voice-card, .section--tint .callout { background: var(--color-bg); }
 
 /* ---------- Voices ---------- */
 .voice-grid { display: grid; gap: 1.5rem; grid-template-columns: repeat(auto-fill, minmax(18rem, 1fr)); }
 .voice-card {
   display: flex; flex-direction: column;
-  background: var(--color-surface); border: 1px solid var(--color-border);
+  border: 1px solid var(--color-border);
   border-radius: var(--radius); padding: 1.6rem 1.6rem 1.3rem;
   transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
-.voice-card:hover { transform: translateY(-2px); box-shadow: 0 14px 30px -22px rgba(80, 50, 20, 0.45); }
+.voice-card:hover { transform: translateY(-2px); box-shadow: 0 14px 30px -22px rgba(43, 42, 40, 0.35); }
 .voice-card[hidden] { display: none; }
 .voice-card h3 { font-size: 1.3rem; margin-bottom: 0.5rem; }
 .voice-card h3 a { color: var(--color-text); text-decoration: none; }
@@ -215,16 +232,33 @@ html[lang="zh-Hans"] .hero h1 { max-width: 14em; }
   background: var(--color-tint); color: var(--color-text); text-decoration: none;
 }
 a.tag:hover { background: var(--color-border); color: var(--color-text); }
-.tag--essay { background: var(--tag-essay); }
-.tag--blog  { background: var(--tag-blog); }
-.tag--video { background: var(--tag-video); }
-.tag--role  { background: transparent; border: 1px solid var(--color-primary); color: var(--color-primary-dark); }
-.tag--lang  { background: transparent; border: 1px solid var(--color-border); font-weight: 500; }
-.tag--sample { background: var(--color-placeholder-bg); border: 1px dashed var(--color-placeholder-border); }
+/* Type, role and language tags: neutral outline */
+.tag--type, .tag--role, .tag--lang {
+  background: transparent; border: 1px solid var(--color-border-strong); color: var(--color-text); font-weight: 500;
+}
+a.tag--type:hover, a.tag--role:hover { background: var(--color-tint); }
+/* Field tags: the only place field colors appear */
+.tag--field { color: #fff; border: 1px solid transparent; }
+.tag--f-education { background: var(--field-education-tag); }
+.tag--f-arts      { background: var(--field-arts); }
+.tag--f-science   { background: var(--field-science); }
+.tag--f-public    { background: var(--field-public); }
+.tag--f-everyday  { background: var(--field-everyday); color: var(--color-text); }
+a.tag--field:hover { color: #fff; filter: brightness(0.9); text-decoration: underline; }
+a.tag--f-everyday:hover { color: var(--color-text); }
+.tag--sample { background: var(--color-placeholder-bg); border: 1px dashed var(--color-placeholder-border); color: var(--color-text); font-weight: 500; }
+
+/* Thin accent line on cards, in the colour of the piece's first field */
+.voice-card { border-top: 3px solid var(--color-border); }
+.voice-card[data-field^="education"] { border-top-color: var(--field-education); }
+.voice-card[data-field^="arts"]      { border-top-color: var(--field-arts); }
+.voice-card[data-field^="science"]   { border-top-color: var(--field-science); }
+.voice-card[data-field^="public"]    { border-top-color: var(--field-public); }
+.voice-card[data-field^="everyday"]  { border-top-color: var(--field-everyday); }
 
 /* Filters */
 .filters {
-  background: var(--color-surface); border: 1px solid var(--color-border);
+  border: 1px solid var(--color-border);
   border-radius: var(--radius); padding: 1.1rem 1.25rem; margin-bottom: 2rem;
 }
 .filter-group { display: flex; flex-wrap: wrap; align-items: center; gap: 0.45rem; margin-bottom: 0.7rem; }
@@ -235,7 +269,7 @@ a.tag:hover { background: var(--color-border); color: var(--color-text); }
   padding: 0.35rem 0.9rem; border-radius: 999px;
   border: 1px solid var(--color-border); background: var(--color-bg); color: var(--color-text);
 }
-.filter-btn:hover { border-color: var(--color-primary); }
+.filter-btn:hover { border-color: var(--color-primary); color: var(--color-primary); }
 .filter-btn[aria-pressed="true"] { background: var(--color-primary); border-color: var(--color-primary); color: #fff; }
 .filter-status { font-size: 0.88rem; color: var(--color-muted); margin: 0.2rem 0 0; }
 .filter-empty { padding: 2rem 0; color: var(--color-muted); text-align: center; }
@@ -252,7 +286,7 @@ a.tag:hover { background: var(--color-border); color: var(--color-text); }
 .prose h3 { margin-top: 1.8rem; }
 .prose blockquote {
   margin: 2rem 0; padding: 0.5rem 0 0.5rem 1.4rem;
-  border-left: 3px solid var(--color-primary); color: var(--color-muted); font-style: italic;
+  border-left: 3px solid var(--color-border-strong); color: var(--color-muted); font-style: italic;
 }
 .prose img { border-radius: 10px; }
 .prose hr { border: 0; text-align: center; margin: 2.5rem 0; }
@@ -260,10 +294,10 @@ a.tag:hover { background: var(--color-border); color: var(--color-text); }
 
 .video-frame {
   position: relative; aspect-ratio: 16 / 9; margin: 0 0 1rem;
-  border-radius: var(--radius); overflow: hidden; background: #2f2a25;
+  border-radius: var(--radius); overflow: hidden; background: #2b2a28;
 }
 .video-frame iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
-.video-frame--empty { display: grid; place-items: center; background: var(--color-tint); border: 1px dashed var(--color-placeholder-border); }
+.video-frame--empty { display: grid; place-items: center; background: var(--color-tint); border: 1px dashed var(--color-border-strong); }
 .video-frame--empty p { margin: 0; color: var(--color-muted); }
 .video-link { font-size: 0.92rem; margin-bottom: 2rem; }
 
@@ -286,15 +320,15 @@ a.tag:hover { background: var(--color-border); color: var(--color-text); }
 .contributor-list { display: grid; gap: 1.5rem; }
 .contributor {
   display: flex; gap: 1.75rem; align-items: flex-start;
-  background: var(--color-surface); border: 1px solid var(--color-border);
+  border: 1px solid var(--color-border);
   border-radius: var(--radius); padding: 1.75rem;
   scroll-margin-top: 6rem;
 }
-.contributor:target { border-color: var(--color-primary); box-shadow: 0 0 0 3px var(--color-tint); }
+.contributor:target { border-color: var(--color-primary); box-shadow: 0 0 0 2px var(--color-primary); }
 .contributor .avatar { width: 112px; height: 112px; }
 .contributor h2 { font-size: 1.5rem; margin-bottom: 0.2rem; }
 .contributor h3 { font-family: var(--font-sans); font-size: 0.82rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--color-muted); margin: 1.2rem 0 0.4rem; }
-.contributor-field { color: var(--color-primary); font-weight: 600; font-size: 0.92rem; margin-bottom: 0.6rem; }
+.contributor-field { color: var(--color-muted); font-weight: 600; font-size: 0.92rem; margin-bottom: 0.6rem; }
 .contributor-body { flex: 1; min-width: 0; }
 .piece-list { margin: 0; padding-left: 1.1rem; }
 .piece-list li { margin-bottom: 0.35rem; }
@@ -317,7 +351,7 @@ a.tag:hover { background: var(--color-border); color: var(--color-text); }
   content: counter(q); position: absolute; left: 0; top: 1rem;
   width: 2.2rem; height: 2.2rem; border-radius: 50%;
   display: grid; place-items: center;
-  background: var(--color-surface); color: var(--color-primary);
+  background: var(--color-bg); color: var(--color-text); border: 1px solid var(--color-border);
   font-family: var(--font-sans); font-size: 0.95rem; font-weight: 600;
 }
 .founder { display: flex; gap: 1.5rem; align-items: flex-start; }
@@ -338,14 +372,14 @@ p.placeholder, div.placeholder, li.placeholder { padding: 0.2rem 0.5rem; }
 .prose p.placeholder { font-family: var(--font-sans); font-size: 0.95rem; }
 
 /* ---------- Footer ---------- */
-.site-footer { background: #2f2925; color: #e2d8cc; padding: 3.5rem 0 2rem; font-size: 0.95rem; }
-.site-footer a { color: #f3e9dc; }
+.site-footer { background: var(--footer-bg); color: var(--footer-text); padding: 3.5rem 0 2rem; font-size: 0.95rem; }
+.site-footer a { color: var(--footer-text); }
 .site-footer a:hover { color: #fff; }
 .footer-name { font-family: var(--font-serif); font-size: 1.2rem; color: #fff; font-weight: 600; margin-bottom: 0.5rem; }
 .footer-grid { display: grid; gap: 2rem; grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr)); margin-bottom: 2rem; }
-.footer-grid h2 { font-family: var(--font-sans); font-size: 0.82rem; text-transform: uppercase; letter-spacing: 0.08em; color: #bfb2a4; margin-bottom: 0.75rem; }
+.footer-grid h2 { font-family: var(--font-sans); font-size: 0.82rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--footer-muted); margin-bottom: 0.75rem; }
 .footer-grid ul { list-style: none; margin: 0; padding: 0; }
 .footer-grid li { margin-bottom: 0.35rem; }
-.footer-bottom { border-top: 1px solid #4a413a; padding-top: 1.5rem; font-size: 0.85rem; color: #bfb2a4; }
+.footer-bottom { border-top: 1px solid var(--footer-line); padding-top: 1.5rem; font-size: 0.85rem; color: var(--footer-muted); }
 .footer-bottom p { margin: 0 0 0.5rem; }
-.site-footer .placeholder { background: #4a4230; outline-color: #9c8a3a; }
+.site-footer .placeholder { background: #3a3936; outline-color: var(--footer-muted); color: var(--footer-text); }

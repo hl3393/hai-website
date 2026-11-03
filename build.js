@@ -295,7 +295,7 @@ function tags(piece, lang, root, linkTags) {
   let out = t(`tag--type tag--${piece.type}`, label("types", piece.type, lang), "type", piece.type);
   if (piece.role) out += " " + t("tag--role", label("roles", piece.role, lang), "role", piece.role);
   piece.fields.forEach((f) => {
-    out += " " + t("tag--field", label("fields", f, lang), "field", f);
+    out += " " + t(`tag--field tag--f-${f}`, label("fields", f, lang), "field", f);
   });
   if (piece.language !== lang) {
     out += ` <span class="tag tag--lang">${esc(label("languages", piece.language, lang))}</span>`;

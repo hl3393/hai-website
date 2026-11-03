@@ -368,7 +368,10 @@ carry a yellow "Sample" label. Delete those files once real pieces are in.
 
 - **Email address:** change `"email"`.
 - **Add a field** (e.g. Health): add a line inside `"fields"`:
-  `"health": { "en": "Health", "zh": "健康" },`. It appears in the filters
+  `"health": { "en": "Health", "zh": "健康", "color": "#4F6B73", "shape": "circle" },`.
+  Each field has a colour and a small geometric mark. Shapes available:
+  `circle`, `triangle`, `square`, `half-circle`, `bar`. For a light colour,
+  add `"darkText": true` so the tag text stays readable. It appears in the filters
   automatically, and pieces can use `field: health`. Roles (`"roles"`) and
   types (`"types"`) work the same way.
 - **Rename a field on the site:** change only the `"en"` / `"zh"` text. Keep

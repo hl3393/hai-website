@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" role="img" aria-label="Photo placeholder">
   <!-- Placeholder portrait. Add real photos to this folder (square, about 400×400 pixels). -->
-  <rect width="120" height="120" fill="#f1eee8"/>
-  <circle cx="60" cy="48" r="22" fill="#cfc9bf"/>
-  <path d="M20 112c4-24 20-36 40-36s36 12 40 36" fill="#cfc9bf"/>
+  <rect width="120" height="120" fill="#e4dfd6"/>
+  <circle cx="60" cy="48" r="22" fill="#c4bdb1"/>
+  <path d="M20 112c4-24 20-36 40-36s36 12 40 36" fill="#c4bdb1"/>
 </svg>

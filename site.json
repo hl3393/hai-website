@@ -3,11 +3,11 @@
   "email": "info@humanalignmentinstitute.org",
 
   "fields": {
-    "education": { "en": "Education",                      "zh": "教育" },
-    "arts":      { "en": "Arts & Humanities",              "zh": "艺术与人文" },
-    "science":   { "en": "Science, Technology & Industry", "zh": "科学、技术与产业" },
-    "public":    { "en": "Public & Social Service",        "zh": "公共与社会服务" },
-    "everyday":  { "en": "Work & Everyday Life",           "zh": "劳动与日常生活" }
+    "education": { "en": "Education",                      "zh": "教育",           "color": "#6E7F4E", "tagColor": "#6A7A4B", "shape": "circle" },
+    "arts":      { "en": "Arts & Humanities",              "zh": "艺术与人文",     "color": "#A6463A", "shape": "triangle" },
+    "science":   { "en": "Science, Technology & Industry", "zh": "科学、技术与产业", "color": "#2F4A6D", "shape": "square" },
+    "public":    { "en": "Public & Social Service",        "zh": "公共与社会服务", "color": "#6B4E37", "shape": "half-circle" },
+    "everyday":  { "en": "Work & Everyday Life",           "zh": "劳动与日常生活", "color": "#D9A441", "darkText": true, "shape": "bar" }
   },
 
   "roles": {

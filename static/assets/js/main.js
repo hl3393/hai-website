@@ -140,6 +140,7 @@
     /* ---- 5. Today strip ---- */
     var today = document.querySelector("[data-today]");
     if (today && theme) setupToday(today, theme);
+    setupDisclosures();
 
     /* ---- 3. Current year in footer ---- */
     var years = document.querySelectorAll("[data-current-year]");
@@ -227,8 +228,11 @@
     var dateEl = strip.querySelector("[data-today-date]");
     var placeEl = strip.querySelector("[data-today-place]");
     var sunEl = strip.querySelector("[data-today-sun]");
-    var termEl = strip.querySelector("[data-today-term]");
-    var moonEl = strip.querySelector("[data-today-moon]");
+    // The solar term and moon name appear twice: in the bar (wide screens)
+    // and inside the "Today" panel (narrow screens).
+    var termEls = Array.prototype.slice.call(strip.querySelectorAll("[data-today-term]"));
+    var moonIconEl = strip.querySelector("[data-today-moon-icon]");
+    var moonNameEls = Array.prototype.slice.call(strip.querySelectorAll("[data-today-moon-name]"));
     var locateBtn = strip.querySelector("[data-locate]");
     var requestId = 0;
 
@@ -236,24 +240,29 @@
 
     function render() {
       var now = new Date();
-      dateEl.textContent = now.toLocaleDateString(locale, { weekday: "long", month: "long", day: "numeric" });
+      dateEl.textContent = now.toLocaleDateString(locale, lang === "zh"
+        ? { weekday: "long", month: "long", day: "numeric" }
+        : { weekday: "short", month: "short", day: "numeric" });
 
       // Solar term (二十四节气) and moon phase, both calculated here
       var term = solarTerm(now);
-      termEl.textContent = "";
-      if (lang === "en") {
-        termEl.appendChild(document.createTextNode(SOLAR_TERMS.en[term] + " "));
-        var zhTerm = document.createElement("span");
-        zhTerm.lang = "zh-Hans";
-        zhTerm.textContent = SOLAR_TERMS.zh[term];
-        termEl.appendChild(zhTerm);
-      } else {
-        termEl.textContent = SOLAR_TERMS.zh[term];
-      }
+      termEls.forEach(function (el) {
+        el.textContent = "";
+        if (lang === "en") {
+          el.appendChild(document.createTextNode(SOLAR_TERMS.en[term] + " "));
+          var zhTerm = document.createElement("span");
+          zhTerm.lang = "zh-Hans";
+          zhTerm.textContent = SOLAR_TERMS.zh[term];
+          el.appendChild(zhTerm);
+        } else {
+          el.textContent = SOLAR_TERMS.zh[term];
+        }
+      });
       var age = moonAge(now);
       var phase = Math.floor((age / SYNODIC) * 8 + 0.5) % 8;
-      moonEl.innerHTML = moonIcon(age / SYNODIC);
-      moonEl.appendChild(document.createTextNode(MOON_PHASES[lang][phase]));
+      moonIconEl.innerHTML = moonIcon(age / SYNODIC);
+      moonIconEl.setAttribute("title", MOON_PHASES[lang][phase]);
+      moonNameEls.forEach(function (el) { el.textContent = MOON_PHASES[lang][phase]; });
 
       var p = theme.place();
       var s = p ? theme.sun(now, p.lat, p.lon) : null;
@@ -282,6 +291,7 @@
         var text = (WEATHER[lang][w.code] || "");
         placeEl.textContent = name + " · " + Math.round(w.temp) + "°C" + (text ? (lang === "zh" ? " " : " ") + text : "");
         placeEl.hidden = false;
+        fitTopbar();
       };
       // Reuse a reading from the last 30 minutes, so each page doesn't ask again
       try {
@@ -332,6 +342,64 @@
     }
 
     render();
+    fitTopbar();
     setInterval(render, 5 * 60 * 1000);
+    var resizeTimer;
+    window.addEventListener("resize", function () { clearTimeout(resizeTimer); resizeTimer = setTimeout(fitTopbar, 100); });
+  }
+
+  /* Show the full top bar only when everything fits on one line;
+     otherwise keep the compact layout (date · moon · Today · theme). */
+  function fitTopbar() {
+    var bar = document.querySelector(".topbar");
+    if (!bar) return;
+    var inner = bar.querySelector(".topbar-inner");
+    var left = bar.querySelector(".topbar-left"), right = bar.querySelector(".topbar-right");
+    // Measure the full row at its natural, single-line width
+    bar.classList.remove("is-compact");
+    bar.classList.add("tb-measure");
+    var style = getComputedStyle(inner);
+    var room = inner.clientWidth - parseFloat(style.paddingLeft) - parseFloat(style.paddingRight);
+    var needed = left.getBoundingClientRect().width + right.getBoundingClientRect().width + 16;
+    bar.classList.remove("tb-measure");
+    if (needed > room) bar.classList.add("is-compact");
+  }
+
+
+  /* ---- Narrow screens: the "Today" panel and the theme menu ----
+     Each small button opens its panel; Escape or a click elsewhere closes it. */
+  function setupDisclosures() {
+    var pairs = [];
+    Array.prototype.slice.call(document.querySelectorAll(".tb-toggle")).forEach(function (btn) {
+      var panel = document.getElementById(btn.getAttribute("aria-controls"));
+      if (!panel) return;
+      var close = function (focusBack) {
+        panel.classList.remove("is-open");
+        btn.setAttribute("aria-expanded", "false");
+        if (focusBack) btn.focus();
+      };
+      btn.addEventListener("click", function () {
+        var open = !panel.classList.contains("is-open");
+        pairs.forEach(function (p) { if (p.btn !== btn) p.close(false); });
+        panel.classList.toggle("is-open", open);
+        btn.setAttribute("aria-expanded", open ? "true" : "false");
+      });
+      pairs.push({ btn: btn, panel: panel, close: close });
+    });
+    document.addEventListener("click", function (e) {
+      pairs.forEach(function (p) {
+        if (!p.panel.contains(e.target) && !p.btn.contains(e.target)) p.close(false);
+      });
+    });
+    document.addEventListener("keydown", function (e) {
+      if (e.key !== "Escape") return;
+      pairs.forEach(function (p) { if (p.panel.classList.contains("is-open")) p.close(true); });
+    });
+    // Choosing an appearance closes the theme menu
+    Array.prototype.slice.call(document.querySelectorAll("#theme-menu .theme-btn")).forEach(function (b) {
+      b.addEventListener("click", function () {
+        pairs.forEach(function (p) { if (p.panel.id === "theme-menu" && p.panel.classList.contains("is-open")) p.close(true); });
+      });
+    });
   }
 })();

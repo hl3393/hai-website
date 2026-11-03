@@ -18,12 +18,44 @@
   <meta property="og:description" content="{{DESCRIPTION}}">
   <meta property="og:type" content="{{OG_TYPE}}">
   <meta property="og:url" content="{{CANONICAL}}">
+  <script>
+    /* Time-of-day theme. Runs before the page is drawn, so the right
+       colours appear immediately. Approximate sunrise / sunset hours for
+       each month (January first), at mid-northern latitudes, local clock. */
+    (function () {
+      var SUN = [[7.3,17],[7,17.6],[7.1,19],[6.5,19.6],[5.8,20.1],[5.5,20.5],
+                 [5.7,20.4],[6.2,19.9],[6.7,19.1],[7.2,18.3],[6.8,16.7],[7.2,16.5]];
+      function sunTheme(d) {
+        var s = SUN[d.getMonth()], h = d.getHours() + d.getMinutes() / 60;
+        if (h >= s[0] - 1 && h < s[0] + 1.5) return "sunrise";
+        if (h >= s[0] + 1.5 && h < s[1] - 1.5) return "day";
+        if (h >= s[1] - 1.5 && h < s[1] + 1) return "sunset";
+        return "night";
+      }
+      function choice() {
+        try { var c = localStorage.getItem("hai-theme"); if (c === "light" || c === "dark") return c; } catch (e) {}
+        return "auto";
+      }
+      function resolve() {
+        var c = choice();
+        if (c === "light") return "day";
+        if (c === "dark") return "night";
+        if (window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches) return "night";
+        return sunTheme(new Date());
+      }
+      function apply() { document.documentElement.setAttribute("data-theme", resolve()); }
+      document.documentElement.className += " js";
+      apply();
+      window.haiTheme = { apply: apply, choice: choice };
+    })();
+  </script>
   <link rel="icon" href="{{ROOT}}assets/images/logo.svg" type="image/svg+xml">
   <link rel="stylesheet" href="{{ROOT}}assets/css/style.css">
   <link rel="stylesheet" href="{{ROOT}}assets/css/fields.css">
   <script src="{{ROOT}}assets/js/main.js" defer></script>
 </head>
 <body>
+  <div class="sky" aria-hidden="true"></div>
   <a class="skip-link" href="#main">{{SKIP}}</a>
 
   <header class="site-header">
@@ -37,6 +69,13 @@
         <ul>
 {{NAV_ITEMS}}
           <li class="lang-switch"><a href="{{SWITCH_HREF}}" hreflang="{{OTHER_LANG}}" lang="{{OTHER_LANG}}" title="{{SWITCH_TITLE}}">{{SWITCH_LABEL}}</a></li>
+          <li class="theme-switch">
+            <div class="theme-switch-group" role="group" aria-label="{{THEME_LABEL}}">
+              <button type="button" class="theme-btn" data-theme-choice="auto" aria-pressed="true" title="{{THEME_AUTO_TITLE}}">{{THEME_AUTO}}</button>
+              <button type="button" class="theme-btn" data-theme-choice="light" aria-pressed="false">{{THEME_LIGHT}}</button>
+              <button type="button" class="theme-btn" data-theme-choice="dark" aria-pressed="false">{{THEME_DARK}}</button>
+            </div>
+          </li>
         </ul>
       </nav>
     </div>

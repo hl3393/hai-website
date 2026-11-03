@@ -389,6 +389,28 @@ the same file name). The site uses fonts already installed on readers'
 devices, with no Google Fonts or trackers, so it loads quickly and also works
 in mainland China.
 
+### Time-of-day themes
+
+The site's colours follow the sun, using the visitor's own clock (no
+location is asked for):
+
+| Theme | Roughly when | Look |
+|---|---|---|
+| Sunrise | about 1 h before to 1.5 h after sunrise | soft apricot rising from the bottom of the screen |
+| Day | daytime | the neutral near-white design (default) |
+| Sunset | about 1.5 h before to 1 h after sunset | warm amber / rose-grey |
+| Night | the rest of the night | dark charcoal-indigo |
+
+Sunrise and sunset hours change by month (a mid-northern-latitude
+approximation). Visitors can pick **Auto / Light / Dark** in the header;
+the choice is remembered on their device. With no choice, a device set to
+dark mode gets the night theme.
+
+- Theme colours: the `THEMES` section at the end of `static/assets/css/style.css`.
+- Sunrise/sunset hours per month: the `SUN` list in the `<script>` at the top of
+  `templates/layout.html` (`[sunrise, sunset]` in hours, January first).
+- Night-time field colours: `"nightColor"` for each field in `site.json`.
+
 ## 8. Deploying on Cloudflare Pages
 
 **First-time setup (or update an existing project under Settings → Builds):**

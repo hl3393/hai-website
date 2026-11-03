@@ -22,12 +22,21 @@
   /* ---- Primary: ONLY links, buttons and focus ---- */
   --color-primary: #2f4a6d;     /* indigo */
   --color-primary-dark: #1f3350;
+  --color-on-primary: #ffffff;  /* text on indigo buttons */
 
   /* ---- Footer ---- */
   --footer-bg: #2b2a28;
   --footer-text: #f1eee8;
   --footer-muted: #c9c4ba;
   --footer-line: #45433f;
+  --footer-strong: #ffffff;
+
+  /* ---- Time-of-day extras (see THEMES at the end of this file) ---- */
+  --header-bg: var(--color-bg);
+  --sunrise-sky: #f7dccb;       /* bottom of the screen at sunrise (apricot) */
+  --sunset-sky: #edcdbf;        /* bottom of the screen at sunset (amber-rose) */
+  --sky-low: var(--color-bg);   /* deepest sky colour in the current theme */
+  --shadow: rgba(43, 42, 40, 0.45);
 
   /* ---- Placeholder markers ---- */
   --color-placeholder-bg: #eef0f3;
@@ -54,9 +63,11 @@ html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
   *, *::before, *::after { transition: none !important; }
 }
 
+html { background: var(--color-bg); }
 body {
   margin: 0;
-  background: var(--color-bg);
+  position: relative;
+  background: transparent;
   color: var(--color-text);
   font-family: var(--font-sans);
   font-size: 1.0625rem;
@@ -93,14 +104,14 @@ a:hover { color: var(--color-primary-dark); text-decoration-thickness: 2px; }
 /* ---------- Skip link ---------- */
 .skip-link {
   position: absolute; left: 1rem; top: -100px; z-index: 100;
-  background: var(--color-primary); color: #fff; padding: 0.6rem 1rem; border-radius: 999px;
+  background: var(--color-primary); color: var(--color-on-primary); padding: 0.6rem 1rem; border-radius: 999px;
 }
-.skip-link:focus { top: 1rem; color: #fff; }
+.skip-link:focus { top: 1rem; color: var(--color-on-primary); }
 
 /* ---------- Header ---------- */
 .site-header {
-  background: var(--color-bg);
-  background: color-mix(in srgb, var(--color-bg) 90%, transparent);
+  background: var(--header-bg);
+  background: color-mix(in srgb, var(--header-bg) 90%, transparent);
   backdrop-filter: saturate(160%) blur(12px);
   -webkit-backdrop-filter: saturate(160%) blur(12px);
   border-bottom: 1px solid var(--color-border);
@@ -223,12 +234,12 @@ html[lang="zh-Hans"] .hero h1 { font-size: clamp(2.4rem, 5.6vw, 4.5rem); line-he
 .button-row { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-top: 2rem; }
 .button {
   display: inline-block; padding: 0.7rem 1.4rem; border-radius: 999px;
-  background: var(--color-primary); color: #fff; border: 1px solid var(--color-primary);
+  background: var(--color-primary); color: var(--color-on-primary); border: 1px solid var(--color-primary);
   text-decoration: none; font-weight: 500; font-size: 1rem;
 }
-.button:hover { background: var(--color-primary-dark); border-color: var(--color-primary-dark); color: #fff; text-decoration: none; }
+.button:hover { background: var(--color-primary-dark); border-color: var(--color-primary-dark); color: var(--color-on-primary); text-decoration: none; }
 .button--ghost { background: transparent; color: var(--color-primary); }
-.button--ghost:hover { background: var(--color-primary); color: #fff; }
+.button--ghost:hover { background: var(--color-primary); color: var(--color-on-primary); }
 
 /* ---------- Cards ---------- */
 .grid { display: grid; gap: var(--gap); grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr)); }
@@ -271,7 +282,7 @@ a.tag--field:hover { background: var(--field-tag); color: var(--field-tag-text);
   border-radius: 4px 4px var(--radius) var(--radius);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
-.voice-card:hover { transform: translateY(-3px); box-shadow: 0 20px 40px -28px rgba(43, 42, 40, 0.45); }
+.voice-card:hover { transform: translateY(-3px); box-shadow: 0 20px 40px -28px var(--shadow); }
 .voice-card[hidden] { display: none; }
 .voice-card .card-mark { position: absolute; top: 1.4rem; right: 1.5rem; width: 1.1rem; height: 1.1rem; }
 .voice-card .voice-tags { padding-right: 2rem; }
@@ -294,9 +305,9 @@ html[lang="zh-Hans"] .filter-label { letter-spacing: 0.15em; }
   border: 1px solid var(--color-border); background: var(--color-bg); color: var(--color-text);
 }
 .filter-btn:hover { border-color: var(--color-primary); color: var(--color-primary); }
-.filter-btn[aria-pressed="true"] { background: var(--color-primary); border-color: var(--color-primary); color: #fff; }
+.filter-btn[aria-pressed="true"] { background: var(--color-primary); border-color: var(--color-primary); color: var(--color-on-primary); }
 .filter-btn .mark { width: 0.75em; height: 0.75em; }
-.filter-btn[aria-pressed="true"] .mark { color: #fff; }
+.filter-btn[aria-pressed="true"] .mark { color: var(--color-on-primary); }
 .filter-status { font-size: 0.85rem; color: var(--color-muted); margin: 0.4rem 0 0; }
 .filter-empty { padding: 3rem 0; color: var(--color-muted); text-align: center; }
 
@@ -392,8 +403,8 @@ p.placeholder, div.placeholder, li.placeholder { padding: 0.2rem 0.5rem; }
 /* ---------- Footer ---------- */
 .site-footer { background: var(--footer-bg); color: var(--footer-text); padding: clamp(3.5rem, 7vw, 5rem) 0 2rem; font-size: 0.92rem; }
 .site-footer a { color: var(--footer-text); }
-.site-footer a:hover { color: #fff; }
-.footer-name { font-size: 1.1rem; font-weight: 600; letter-spacing: -0.01em; color: #fff; margin-bottom: 0.5rem; }
+.site-footer a:hover { color: var(--footer-strong); }
+.footer-name { font-size: 1.1rem; font-weight: 600; letter-spacing: -0.01em; color: var(--footer-strong); margin-bottom: 0.5rem; }
 .footer-grid { display: grid; gap: 2rem var(--gap); grid-template-columns: 1fr; margin-bottom: 3rem; }
 @media (min-width: 700px) { .footer-grid { grid-template-columns: repeat(12, minmax(0, 1fr)); } .footer-grid > :nth-child(1) { grid-column: 1 / 6; } .footer-grid > :nth-child(2) { grid-column: 7 / 10; } .footer-grid > :nth-child(3) { grid-column: 10 / -1; } }
 .footer-grid h2 { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.12em; color: var(--footer-muted); margin-bottom: 0.9rem; }
@@ -401,4 +412,126 @@ p.placeholder, div.placeholder, li.placeholder { padding: 0.2rem 0.5rem; }
 .footer-grid li { margin-bottom: 0.4rem; }
 .footer-bottom { border-top: 1px solid var(--footer-line); padding-top: 1.5rem; font-size: 0.82rem; color: var(--footer-muted); }
 .footer-bottom p { margin: 0 0 0.5rem; }
-.site-footer .placeholder { background: #3a3936; outline-color: var(--footer-muted); color: var(--footer-text); }
+.site-footer .placeholder { background: var(--footer-placeholder, #3a3936); outline-color: var(--footer-muted); color: var(--footer-text); }
+
+/* =========================================================
+   THEMES — the site follows the sun (see the script in <head>)
+   ---------------------------------------------------------
+   data-theme on <html> is one of: sunrise · day · night · sunset
+   "day" is the default above. Each theme only overrides colours.
+   Every text colour keeps WCAG AA contrast on its backgrounds.
+   ========================================================= */
+
+/* The "sky": a fixed layer behind the page (the <div class="sky"> at the
+   top of templates/layout.html). It holds the page colour, plus two soft
+   gradients rising from the bottom of the screen: one for sunrise, one for
+   sunset. Only the gradient for the current theme is visible. */
+.sky { position: fixed; inset: 0; z-index: -1; pointer-events: none; background-color: var(--color-bg); }
+.sky::before,
+.sky::after { content: ""; position: absolute; inset: 0; opacity: 0; }
+.sky::before { background: linear-gradient(to top, var(--sunrise-sky) 0%, rgba(252, 246, 241, 0) 70%); }
+.sky::after  { background: linear-gradient(to top, var(--sunset-sky) 0%, rgba(249, 242, 238, 0) 70%); }
+:root[data-theme="sunrise"] .sky::before,
+:root[data-theme="sunset"] .sky::after { opacity: 1; }
+
+/* Sunrise: the bottom of a tequila sunrise, very soft, fading upward */
+:root[data-theme="sunrise"] {
+  --color-bg: #fcf6f1;
+  --color-tint: #f6ece4;
+  --color-border: #e8dcd1;
+  --header-bg: #fcf3ec;
+  --sky-low: #f7dccb;
+}
+
+/* Sunset: warm amber / rose-gray, a little deeper than sunrise */
+:root[data-theme="sunset"] {
+  --color-bg: #f9f2ee;
+  --color-tint: #f0e4de;
+  --color-muted: #5a5550;
+  --color-border: #e3d5cd;
+  --header-bg: #f6ebe5;
+  --sky-low: #edcdbf;
+}
+
+/* Night: deep charcoal-indigo, off-white text, brighter accents */
+:root[data-theme="night"] {
+  color-scheme: dark;
+  --color-bg: #1b1e25;
+  --color-tint: #242832;
+  --color-surface: #2a2f39;
+  --color-text: #f1eee8;
+  --color-muted: #b8b3aa;
+  --color-border: #363b46;
+  --color-border-strong: #5b606b;
+  --color-primary: #a9bedd;
+  --color-primary-dark: #c9d7ec;
+  --color-on-primary: #1b1e25;
+  --footer-bg: #121419;
+  --footer-line: #2c3038;
+  --footer-placeholder: #2c3443;
+  --color-placeholder-bg: #2c3443;
+  --color-placeholder-border: #7d8aa0;
+  --header-bg: #1b1e25;
+  --sky-low: #1b1e25;
+  --shadow: rgba(0, 0, 0, 0.6);
+}
+:root[data-theme="night"] .eyebrow::before { background: var(--color-text); }
+:root[data-theme="night"] .brand img { filter: brightness(1.6); }
+
+/* Without JavaScript, still respect the system's dark mode */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) {
+    color-scheme: dark;
+    --color-bg: #1b1e25; --color-tint: #242832; --color-surface: #2a2f39;
+    --color-text: #f1eee8; --color-muted: #b8b3aa;
+    --color-border: #363b46; --color-border-strong: #5b606b;
+    --color-primary: #a9bedd; --color-primary-dark: #c9d7ec; --color-on-primary: #1b1e25;
+    --footer-bg: #121419; --footer-line: #2c3038; --footer-placeholder: #2c3443;
+    --color-placeholder-bg: #2c3443; --color-placeholder-border: #7d8aa0;
+    --header-bg: #1b1e25; --sky-low: #1b1e25; --shadow: rgba(0, 0, 0, 0.6);
+  }
+}
+
+/* Smooth fade between themes (only after the page has loaded, so there
+   is never an animation on first view) */
+.theme-ready .sky,
+.theme-ready .site-header,
+.theme-ready .site-footer,
+.theme-ready .section--tint,
+.theme-ready .card,
+.theme-ready .callout,
+.theme-ready .voice-card,
+.theme-ready .contributor,
+.theme-ready .filters,
+.theme-ready .author-box {
+  transition: background-color 1.2s ease, color 1.2s ease, border-color 1.2s ease;
+}
+.theme-ready body { transition: color 1.2s ease; }
+.theme-ready .sky::before,
+.theme-ready .sky::after { transition: opacity 1.2s ease; }
+@media (prefers-reduced-motion: reduce) {
+  .theme-ready .sky, .theme-ready .sky::before, .theme-ready .sky::after,
+  .theme-ready body, .theme-ready .site-header, .theme-ready .site-footer,
+  .theme-ready .section--tint, .theme-ready .card, .theme-ready .callout,
+  .theme-ready .voice-card, .theme-ready .contributor, .theme-ready .filters,
+  .theme-ready .author-box { transition: none !important; }
+}
+
+/* ---------- Theme control in the header ---------- */
+.theme-switch { display: none; }
+.js .theme-switch { display: block; margin-left: 0.5rem; }
+.theme-switch-group {
+  display: inline-flex; padding: 2px; gap: 2px;
+  border: 1px solid var(--color-border); border-radius: 999px;
+}
+.theme-btn {
+  font: inherit; font-size: 0.78rem; line-height: 1; cursor: pointer;
+  padding: 0.42rem 0.65rem; border: 0; border-radius: 999px;
+  background: transparent; color: var(--color-muted);
+}
+.theme-btn:hover { color: var(--color-text); background: var(--color-tint); }
+.theme-btn[aria-pressed="true"] { background: var(--color-text); color: var(--color-bg); }
+@media (max-width: 860px) {
+  .js .theme-switch { margin: 0.75rem 0 0; }
+  .theme-btn { font-size: 0.9rem; padding: 0.55rem 0.9rem; }
+}

@@ -459,6 +459,11 @@ function render({ lang, rel, depth, title, description, navKey, content, ogType,
     SWITCH_HREF: `${root}${prefix(other)}${switchRel || rel}`,
     SWITCH_TITLE: esc(ui.switchTitle),
     SWITCH_LABEL: esc(ui.switchLabel),
+    THEME_LABEL: esc(ui.themeLabel),
+    THEME_AUTO: esc(ui.themeAuto),
+    THEME_AUTO_TITLE: esc(ui.themeAutoTitle),
+    THEME_LIGHT: esc(ui.themeLight),
+    THEME_DARK: esc(ui.themeDark),
     TAGLINE: esc(ui.tagline),
     FOOTER_EXPLORE: esc(ui.footerExplore),
     FOOTER_LINKS: navLinks("            ", false),
@@ -490,7 +495,13 @@ write(
         return (
           `.tag--f-${key} { --field: ${color}; --field-tag: ${tagBg}; --field-tag-text: ${tagText}; }\n` +
           `.voice-card--f-${key} { --field: ${color}; }\n` +
-          `.mark--${key} { color: ${color}; }`
+          `.mark--${key} { color: ${color}; }\n` +
+          // Night theme: brighter field colours with dark text, for contrast on dark
+          (f.nightColor
+            ? `:root[data-theme="night"] .tag--f-${key}, :root[data-theme="night"] .voice-card--f-${key} { --field: ${f.nightColor}; --field-tag: ${f.nightColor}; --field-tag-text: #1b1e25; }\n` +
+              `:root[data-theme="night"] .mark--${key} { color: ${f.nightColor}; }\n` +
+              `@media (prefers-color-scheme: dark) { :root:not([data-theme]) .tag--f-${key}, :root:not([data-theme]) .voice-card--f-${key} { --field: ${f.nightColor}; --field-tag: ${f.nightColor}; --field-tag-text: #1b1e25; } :root:not([data-theme]) .mark--${key} { color: ${f.nightColor}; } }`
+            : "")
         );
       })
       .join("\n") +

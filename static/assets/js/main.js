@@ -4,6 +4,7 @@
    1. Opens/closes the menu on small screens.
    2. Filters the Voices page by field, role and type (combinable).
    3. Fills in the current year in the footer.
+   4. Theme control (Auto / Light / Dark) and following the sun.
    The site still works if JavaScript is turned off
    (the menu stays open and all voices are shown).
    ========================================================= */
@@ -92,6 +93,46 @@
 
       bar.hidden = false;
       apply(false);
+    }
+
+    /* ---- 4. Theme: Auto (follows the sun) / Light / Dark ---- */
+    var theme = window.haiTheme;
+    var themeButtons = Array.prototype.slice.call(document.querySelectorAll("[data-theme-choice]"));
+    if (theme) {
+      var showChoice = function () {
+        var c = theme.choice();
+        themeButtons.forEach(function (b) {
+          b.setAttribute("aria-pressed", b.getAttribute("data-theme-choice") === c ? "true" : "false");
+        });
+      };
+      themeButtons.forEach(function (b) {
+        b.addEventListener("click", function () {
+          var c = b.getAttribute("data-theme-choice");
+          try {
+            if (c === "auto") localStorage.removeItem("hai-theme");
+            else localStorage.setItem("hai-theme", c);
+          } catch (e) { /* storage blocked: the choice lasts for this page only */ }
+          if (c === "auto") theme.apply();
+          else document.documentElement.setAttribute("data-theme", c === "dark" ? "night" : "day");
+          showChoice();
+        });
+      });
+      showChoice();
+      // Keep following the sun while the page stays open, and react to
+      // the system switching dark mode on or off.
+      setInterval(function () { if (theme.choice() === "auto") theme.apply(); }, 5 * 60 * 1000);
+      if (window.matchMedia) {
+        var mq = window.matchMedia("(prefers-color-scheme: dark)");
+        var onChange = function () { if (theme.choice() === "auto") theme.apply(); };
+        if (mq.addEventListener) mq.addEventListener("change", onChange);
+        else if (mq.addListener) mq.addListener(onChange);
+      }
+      // Turn on the fade only after the first paint, so loading never animates.
+      window.requestAnimationFrame(function () {
+        window.requestAnimationFrame(function () {
+          document.documentElement.classList.add("theme-ready");
+        });
+      });
     }
 
     /* ---- 3. Current year in footer ---- */

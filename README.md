@@ -15,6 +15,38 @@ text file.** Add a file, and the piece appears on the site automatically.
 
 ---
 
+## Design principles
+
+*Follow these in every change to the site. The inspirations are interpreted,
+never copied: no other brand's logos, fonts, imagery or layouts.*
+
+The site should feel approachable and human, but clearly designed. On a
+closer look, you notice it is **restraint** that makes it feel premium.
+The reference is the philosophy behind a premium Scandinavian car cabin
+(the second-generation Volvo XC90, 2015): natural wood, leather, a little
+chrome, very little colour, damped controls, and the precision of a
+high-end hi-fi speaker.
+
+| Principle | What it means here | Where it lives |
+|---|---|---|
+| **Calm confidence** | No decoration for its own sake. A few memorable signatures instead of many effects: the large hero question, the field shapes. | `pages/*/index.html`, `site.json` (shapes) |
+| **Hide complexity** | Minimal navigation (the logo is "Home"); secondary things tucked away: filters fold behind one **Filter** control, Appearance and the "today" strip live in the footer. Each page shows the most important thing first. | `templates/layout.html`, `build.js` |
+| **Scandinavian light and space** | Generous whitespace, light surfaces, a comfortable line length (`--measure`, about 65–75 characters) and line height. Reading should feel like sitting in a quiet, bright room. | `style.css` `:root` |
+| **Warmth (wood)** | Warm near-white surfaces. Very occasionally, one large block in pale oak `#E9E0D2` (`.section--oak`, `.callout--oak`), at most one per page. Never wood-grain images. | `style.css` |
+| **Leather** | Soft corners (16px, 12px for small parts). Deep cognac `#7A4E33` only for thin lines, e.g. on pull quotes. | `--radius`, `--color-cognac` |
+| **A little chrome** | One hairline weight everywhere: 1px cool silver-grey `#C9CCD1` for dividers, card edges and the focus halo. Keyboard focus is a 2px indigo ring inside that silver hairline: silver alone would be too faint to see. | `--hairline`, `:focus-visible` |
+| **Very little colour** | 90%+ neutral. Indigo `#2F4A6D` only for links, buttons and focus. Colour appears only in field marks and tags. | `style.css`, `site.json` |
+| **Damped controls** | Every interactive element presses in quickly (`scale(0.97)`) and springs back gently. No motion for visitors who ask for reduced motion. | `--ease-spring`, `--press` |
+| **Hi-fi precision** | Strict spacing scale **4 · 8 · 12 · 16 · 24 · 32 · 48 · 64 · 96 px** (`--s1`…`--s9`) and type scale **12 · 14 · 16 · 18 · 20 · 24 · 32 · 40 · 56 · 72 · 96 px** (`--t-12`…). Everything sits on a 12-column grid. A very faint perforated dot texture, like a speaker grille, appears in the footer only. | `style.css` `:root` |
+| **Natural materials and craft** | Real photographs of people and places, never tech or robot imagery. Use real portraits for contributors. | `static/assets/images/` |
+| **Human-centred and approachable** | Tap targets at least 44px, reading text at 18px, and warm first-person microcopy ("We are still gathering these voices"). Visitors should feel cared for, never sold to. All text meets WCAG AA contrast in every theme. | `site.json` (`ui`), `style.css` |
+
+**Before adding anything, ask:** does it earn its place? If it is decoration,
+remove it. If it is secondary, tuck it away. Use only values from the
+spacing and type scales.
+
+---
+
 ## 1. How the site works (in one minute)
 
 You write **content** (simple text files). A small program, `build.js`, turns
@@ -389,26 +421,46 @@ the same file name). The site uses fonts already installed on readers'
 devices, with no Google Fonts or trackers, so it loads quickly and also works
 in mainland China.
 
-### Time-of-day themes
+### Time-of-day themes, sun and weather
 
-The site's colours follow the sun, using the visitor's own clock (no
-location is asked for):
+The site's colours follow the real sun where the visitor is:
 
-| Theme | Roughly when | Look |
+| Theme | When | Look |
 |---|---|---|
-| Sunrise | about 1 h before to 1.5 h after sunrise | soft apricot rising from the bottom of the screen |
+| Sunrise | 1 h before to 1.5 h after sunrise | soft apricot rising from the bottom of the screen |
 | Day | daytime | the neutral near-white design (default) |
-| Sunset | about 1.5 h before to 1 h after sunset | warm amber / rose-grey |
+| Sunset | 1.5 h before to 1 h after sunset | warm amber / rose-grey |
 | Night | the rest of the night | dark charcoal-indigo |
 
-Sunrise and sunset hours change by month (a mid-northern-latitude
-approximation). Visitors can pick **Auto / Light / Dark** in the header;
-the choice is remembered on their device. With no choice, a device set to
-dark mode gets the night theme.
+**How the site knows where the visitor is, without asking:** it reads the
+browser's time zone (e.g. `America/New_York`) and looks up a representative
+city in a table (`ZONES` in `templates/sun.js`). Sunrise and sunset are then
+calculated in the browser with the standard sunrise equation. If the time
+zone isn't in the table, rough sunrise/sunset hours by month are used.
+
+**The "today" strip** at the top of the footer shows the date, the city with
+current weather (e.g. "New York · 8°C cloudy", from the free
+[Open-Meteo](https://open-meteo.com) service, no key needed), and today's
+sunrise and sunset. If the weather can't be loaded, that part simply stays
+hidden.
+
+**"Use my location":** the browser asks for the visitor's exact location
+**only when they click this button**, never automatically. If they agree,
+the exact coordinates are used for weather and sun times, and remembered on
+their device. "Use time-zone city" switches back. If they decline, nothing
+changes.
+
+**Appearance:** visitors can pick **Auto / Light / Dark** in the footer; the
+choice is remembered on their device. With no choice, a device set to dark
+mode gets the night theme.
+
+*Privacy note:* to show the weather, the visitor's browser sends the city's
+coordinates (or, if the visitor chose it, their own) to Open-Meteo. Nothing is
+sent to us.
 
 - Theme colours: the `THEMES` section at the end of `static/assets/css/style.css`.
-- Sunrise/sunset hours per month: the `SUN` list in the `<script>` at the top of
-  `templates/layout.html` (`[sunrise, sunset]` in hours, January first).
+- Time zone → city table, sun calculation, fallback hours: `templates/sun.js`.
+- Weather wording (EN/ZH): `WEATHER` in `static/assets/js/main.js`.
 - Night-time field colours: `"nightColor"` for each field in `site.json`.
 
 ## 8. Deploying on Cloudflare Pages

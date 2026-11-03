@@ -5,6 +5,7 @@
    2. Filters the Voices page by field, role and type (combinable).
    3. Fills in the current year in the footer.
    4. Theme control (Auto / Light / Dark) and following the sun.
+   5. The "today" strip: date, city, weather, sunrise and sunset.
    The site still works if JavaScript is turned off
    (the menu stays open and all voices are shown).
    ========================================================= */
@@ -92,6 +93,7 @@
       });
 
       bar.hidden = false;
+      if (state.field !== "all" || state.role !== "all" || state.type !== "all") bar.open = true;
       apply(false);
     }
 
@@ -135,8 +137,130 @@
       });
     }
 
+    /* ---- 5. Today strip ---- */
+    var today = document.querySelector("[data-today]");
+    if (today && theme) setupToday(today, theme);
+
     /* ---- 3. Current year in footer ---- */
     var years = document.querySelectorAll("[data-current-year]");
     for (var i = 0; i < years.length; i++) years[i].textContent = new Date().getFullYear();
   });
+
+  /* ---------------------------------------------------------------
+     Today strip helpers
+     - Location comes from the time zone (see templates/sun.js); the
+       browser is asked for the exact location ONLY when the visitor
+       clicks "Use my location".
+     - Weather comes from Open-Meteo (free, no key). If anything fails,
+       the weather part simply stays hidden.
+     --------------------------------------------------------------- */
+  var WEATHER = {
+    en: { 0: "clear", 1: "mostly clear", 2: "partly cloudy", 3: "cloudy", 45: "fog", 48: "fog",
+          51: "drizzle", 53: "drizzle", 55: "drizzle", 56: "freezing drizzle", 57: "freezing drizzle",
+          61: "light rain", 63: "rain", 65: "heavy rain", 66: "freezing rain", 67: "freezing rain",
+          71: "light snow", 73: "snow", 75: "heavy snow", 77: "snow grains",
+          80: "showers", 81: "showers", 82: "heavy showers", 85: "snow showers", 86: "snow showers",
+          95: "thunderstorm", 96: "thunderstorm", 99: "thunderstorm" },
+    zh: { 0: "晴", 1: "晴间多云", 2: "局部多云", 3: "阴", 45: "雾", 48: "雾",
+          51: "毛毛雨", 53: "毛毛雨", 55: "毛毛雨", 56: "冻毛毛雨", 57: "冻毛毛雨",
+          61: "小雨", 63: "中雨", 65: "大雨", 66: "冻雨", 67: "冻雨",
+          71: "小雪", 73: "中雪", 75: "大雪", 77: "米雪",
+          80: "阵雨", 81: "阵雨", 82: "强阵雨", 85: "阵雪", 86: "阵雪",
+          95: "雷暴", 96: "雷暴", 99: "雷暴" }
+  };
+
+  function setupToday(strip, theme) {
+    var lang = document.documentElement.lang === "zh-Hans" ? "zh" : "en";
+    var locale = lang === "zh" ? "zh-CN" : "en-US";
+    var dateEl = strip.querySelector("[data-today-date]");
+    var placeEl = strip.querySelector("[data-today-place]");
+    var sunEl = strip.querySelector("[data-today-sun]");
+    var locateBtn = strip.querySelector("[data-locate]");
+    var requestId = 0;
+
+    function time(d) { return d.toLocaleTimeString(locale, { hour: "numeric", minute: "2-digit" }); }
+
+    function render() {
+      var now = new Date();
+      dateEl.textContent = now.toLocaleDateString(locale, { weekday: "long", month: "long", day: "numeric" });
+
+      var p = theme.place();
+      var s = p ? theme.sun(now, p.lat, p.lon) : null;
+      if (s && s.length === 2) {
+        sunEl.textContent = strip.getAttribute("data-sunrise") + " " + time(s[0]) + " · " +
+          strip.getAttribute("data-sunset") + " " + time(s[1]);
+        sunEl.hidden = false;
+      } else {
+        sunEl.hidden = true;
+      }
+
+      if (locateBtn) {
+        locateBtn.textContent = locateBtn.getAttribute(p && p.own ? "data-label-on" : "data-label-off");
+      }
+      showWeather(p, lang);
+    }
+
+    function showWeather(p, lang) {
+      var id = ++requestId;
+      placeEl.hidden = true;
+      if (!p || !window.fetch) return;
+      var name = p.own ? strip.getAttribute("data-yours") : p[lang];
+      var key = "hai-wx:" + p.lat.toFixed(2) + "," + p.lon.toFixed(2);
+      var show = function (w) {
+        if (id !== requestId || !w || !isFinite(w.temp)) return;
+        var text = (WEATHER[lang][w.code] || "");
+        placeEl.textContent = name + " · " + Math.round(w.temp) + "°C" + (text ? (lang === "zh" ? " " : " ") + text : "");
+        placeEl.hidden = false;
+      };
+      // Reuse a reading from the last 30 minutes, so each page doesn't ask again
+      try {
+        var cached = JSON.parse(sessionStorage.getItem(key) || "null");
+        if (cached && Date.now() - cached.t < 30 * 60 * 1000) return show(cached);
+      } catch (e) {}
+
+      var ctrl = window.AbortController ? new AbortController() : null;
+      var timer = setTimeout(function () { if (ctrl) ctrl.abort(); }, 6000);
+      fetch("https://api.open-meteo.com/v1/forecast?latitude=" + p.lat.toFixed(3) +
+            "&longitude=" + p.lon.toFixed(3) + "&current=temperature_2m,weather_code&timezone=auto",
+            ctrl ? { signal: ctrl.signal } : undefined)
+        .then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); })
+        .then(function (data) {
+          clearTimeout(timer);
+          var w = { t: Date.now(), temp: data.current.temperature_2m, code: data.current.weather_code };
+          try { sessionStorage.setItem(key, JSON.stringify(w)); } catch (e) {}
+          show(w);
+        })
+        .catch(function () { clearTimeout(timer); /* stay quiet */ });
+    }
+
+    if (locateBtn) {
+      if (!navigator.geolocation) {
+        locateBtn.parentNode.hidden = true;
+      } else {
+        locateBtn.addEventListener("click", function () {
+          var p = theme.place();
+          if (p && p.own) {
+            // Go back to the time-zone city
+            window.haiOwnPlace = null;
+            try { localStorage.removeItem("hai-place"); } catch (e) {}
+            render();
+            if (theme.choice() === "auto") theme.apply();
+            return;
+          }
+          // Only now, because the visitor asked, do we request their location.
+          navigator.geolocation.getCurrentPosition(function (pos) {
+            var own = { lat: pos.coords.latitude, lon: pos.coords.longitude, own: true };
+            try { localStorage.setItem("hai-place", JSON.stringify({ lat: own.lat, lon: own.lon })); }
+            catch (e) { window.haiOwnPlace = own; }
+            render();
+            if (theme.choice() === "auto") theme.apply();
+          }, function () { /* declined or unavailable: keep the time-zone city quietly */ },
+          { timeout: 10000, maximumAge: 10 * 60 * 1000 });
+        });
+      }
+    }
+
+    render();
+    setInterval(render, 5 * 60 * 1000);
+  }
 })();

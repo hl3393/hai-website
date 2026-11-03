@@ -359,13 +359,20 @@ function filterBar(lang) {
           )
           .join("\n        ")}
       </div>`;
+  // Folded away behind one "Filter" control; opens by itself when a link
+  // already contains filters (e.g. voices.html?field=arts).
   return `
-    <div class="filters" data-filters hidden>
+    <details class="filters" data-filters hidden>
+      <summary class="filters-summary">
+        <span class="filters-summary-label">${esc(ui.filterToggle)}</span>
+        <span class="filter-status" aria-live="polite" data-filter-status data-template="${esc(ui.showing)}"></span>
+      </summary>
+      <div class="filters-body">
       ${group("field", ui.filterField, Object.entries(site.fields))}
       ${group("role", ui.filterRole, Object.entries(site.roles))}
       ${group("type", ui.filterType, Object.entries(site.types))}
-      <p class="filter-status" aria-live="polite" data-filter-status data-template="${esc(ui.showing)}"></p>
-    </div>`;
+      </div>
+    </details>`;
 }
 
 function allVoices(lang, root) {
@@ -427,13 +434,15 @@ function contributorsList(lang, root) {
 /* ------------------------------------------------------------- layout */
 
 const layout = read("templates/layout.html");
+const sunScript = read("templates/sun.js").trim();
 
 function render({ lang, rel, depth, title, description, navKey, content, ogType, switchRel, rootOverride }) {
   const ui = site.ui[lang];
   const other = lang === "en" ? "zh" : "en";
   const root = rootOverride || "../".repeat(depth);
+  // The header menu leaves out "Home" (the logo goes home); the footer lists everything.
   const navLinks = (indent, withCurrent) =>
-    NAV_ORDER.map((key) => {
+    NAV_ORDER.filter((key) => !withCurrent || key !== "index").map((key) => {
       let cur = "";
       if (withCurrent && key === navKey) cur = rel === `${key}.html` ? ' aria-current="page"' : ' aria-current="true"';
       return `${indent}<li><a href="${root}${prefix(lang)}${key}.html"${cur}>${esc(ui.nav[key])}</a></li>`;
@@ -460,6 +469,12 @@ function render({ lang, rel, depth, title, description, navKey, content, ogType,
     SWITCH_TITLE: esc(ui.switchTitle),
     SWITCH_LABEL: esc(ui.switchLabel),
     THEME_LABEL: esc(ui.themeLabel),
+    LOCATE_ON: esc(ui.locateOn),
+    SUNRISE: esc(ui.sunrise),
+    SUNSET: esc(ui.sunset),
+    YOUR_LOCATION: esc(ui.yourLocation),
+    LOCATE_OFF: esc(ui.locateOff),
+    SUN_SCRIPT: sunScript,
     THEME_AUTO: esc(ui.themeAuto),
     THEME_AUTO_TITLE: esc(ui.themeAutoTitle),
     THEME_LIGHT: esc(ui.themeLight),

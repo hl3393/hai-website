@@ -1,0 +1,7 @@
+# Cloudflare Pages reads this file to add HTTP headers to every page.
+# You normally don't need to change it.
+/*
+  X-Content-Type-Options: nosniff
+  X-Frame-Options: DENY
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: camera=(), microphone=(), geolocation=()

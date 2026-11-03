@@ -30,7 +30,7 @@ high-end hi-fi speaker.
 | Principle | What it means here | Where it lives |
 |---|---|---|
 | **Calm confidence** | No decoration for its own sake. A few memorable signatures instead of many effects: the large hero question, the Five Elements field marks. | `pages/*/index.html`, `site.json` (shapes) |
-| **Hide complexity** | Minimal navigation (the logo is "Home"); secondary things tucked away: filters fold behind one **Filter** control, Appearance and the "today" strip live in the footer. Each page shows the most important thing first. | `templates/layout.html`, `build.js` |
+| **Hide complexity** | Minimal navigation (the logo is "Home"); secondary things tucked away: filters fold behind one **Filter** control; the "today" information and Appearance sit in a thin, quiet top bar that folds into a **Today** button and a sun/moon button when space is short. Each page shows the most important thing first. | `templates/layout.html`, `build.js` |
 | **Scandinavian light and space** | Generous whitespace, light surfaces, a comfortable line length (`--measure`, about 65–75 characters) and line height. Reading should feel like sitting in a quiet, bright room. | `style.css` `:root` |
 | **Warmth (wood)** | Warm near-white surfaces. Very occasionally, one large block in pale oak `#E9E0D2` (`.section--oak`, `.callout--oak`), at most one per page. Never wood-grain images. | `style.css` |
 | **Leather** | Soft corners (16px, 12px for small parts). Deep cognac `#7A4E33` only for thin lines, e.g. on pull quotes. | `--radius`, `--color-cognac` |
@@ -450,6 +450,55 @@ When the real logo is ready:
 4. Commit. The site rebuilds and the logo appears everywhere.
 
 To remove the logo again, set `"logo": ""`.
+
+### Time-of-day themes, sun and weather
+
+The site's colours follow the real sun where the visitor is:
+
+| Theme | When | Look |
+|---|---|---|
+| Sunrise | 1 h before to 1.5 h after sunrise | soft apricot rising from the bottom of the screen |
+| Day | daytime | the neutral near-white design (default) |
+| Sunset | 1.5 h before to 1 h after sunset | warm amber / rose-grey |
+| Night | the rest of the night | dark charcoal-indigo |
+
+**How the site knows where the visitor is, without asking:** it reads the
+browser's time zone (e.g. `America/New_York`) and looks up a representative
+city in a table (`ZONES` in `templates/sun.js`). Sunrise and sunset are then
+calculated in the browser with the standard sunrise equation. If the time
+zone isn't in the table, rough sunrise/sunset hours by month are used.
+
+**The top bar** (a thin line above the header, on every page) shows the
+date, the solar term (二十四节气), the moon phase, the city with
+current weather (e.g. "New York · 8°C cloudy", from the free
+[Open-Meteo](https://open-meteo.com) service, no key needed), and today's
+sunrise and sunset. The solar term and moon phase are calculated in the
+browser. If the weather can't be loaded, that part simply stays hidden.
+
+When the full row doesn't fit on one line (phones, tablets, narrow windows),
+the bar shows only the date and moon; the rest moves behind a **Today**
+button, and Auto / Light / Dark behind a small sun/moon button.
+
+**"Use my location":** the browser asks for the visitor's exact location
+**only when they click this button**, never automatically. If they agree,
+the exact coordinates are used for weather and sun times, and remembered on
+their device. "Use time-zone city" switches back. If they decline, nothing
+changes.
+
+**Appearance:** visitors can pick **Auto / Light / Dark** in the top bar; the
+choice is remembered on their device. With no choice, a device set to dark
+mode gets the night theme.
+
+*Privacy note:* to show the weather, the visitor's browser sends the city's
+coordinates (or, if the visitor chose it, their own) to Open-Meteo. Nothing is
+sent to us.
+
+- Theme colours: the `THEMES` section at the end of `static/assets/css/style.css`.
+- Time zone → city table, sun calculation, fallback hours: `templates/sun.js`.
+- Weather wording, solar terms and moon phases (EN/ZH): `WEATHER`,
+  `SOLAR_TERMS` and `MOON_PHASES` in `static/assets/js/main.js`.
+- Top bar markup: the top of `templates/layout.html`.
+- Night-time field colours: `"nightColor"` for each field in `site.json`.
 
 ## 8. Deploying on Cloudflare Pages
 

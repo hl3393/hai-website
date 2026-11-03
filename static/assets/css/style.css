@@ -356,6 +356,8 @@ a.tag--f-everyday:hover { color: var(--color-text); }
 }
 .founder { display: flex; gap: 1.5rem; align-items: flex-start; }
 .founder .avatar { width: 112px; height: 112px; }
+.founder h2 { margin-bottom: 0.8rem; }
+.lead-text { font-family: var(--font-serif); font-size: 1.3rem; line-height: 1.65; }
 @media (max-width: 600px) { .founder { flex-direction: column; } }
 .contact-email { font-family: var(--font-serif); font-size: 1.3rem; }
 

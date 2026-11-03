@@ -29,7 +29,7 @@ high-end hi-fi speaker.
 
 | Principle | What it means here | Where it lives |
 |---|---|---|
-| **Calm confidence** | No decoration for its own sake. A few memorable signatures instead of many effects: the large hero question, the Five Elements field marks. | `pages/*/index.html`, `site.json` (shapes) |
+| **Calm confidence** | No decoration for its own sake. A few memorable signatures instead of many effects: the large hero question, the Five Elements field marks and the logo built from them. | `pages/*/index.html`, `site.json` (shapes) |
 | **Hide complexity** | Minimal navigation (the logo is "Home"); secondary things tucked away: filters fold behind one **Filter** control; the "today" information and Appearance sit in a thin, quiet top bar that folds into a **Today** button and a sun/moon button when space is short. Each page shows the most important thing first. | `templates/layout.html`, `build.js` |
 | **Scandinavian light and space** | Generous whitespace, light surfaces, a comfortable line length (`--measure`, about 65–75 characters) and line height. Reading should feel like sitting in a quiet, bright room. | `style.css` `:root` |
 | **Warmth (wood)** | Warm near-white surfaces. Very occasionally, one large block in pale oak `#E9E0D2` (`.section--oak`, `.callout--oak`), at most one per page. Never wood-grain images. | `style.css` |
@@ -424,32 +424,35 @@ Colours, spacing and fonts are at the top of `static/assets/css/style.css`
 (`:root`). The site uses fonts already installed on readers' devices, with no
 Google Fonts or trackers, so it loads quickly and also works in mainland China.
 
-### How to add the logo later
+### The logo and browser icons
 
-For now the header shows only the wordmark, **Human Alignment Institute**
-with **人类对齐研究院** below, and the browser tab shows a temporary "H"
-icon (`static/assets/images/favicon.svg`). The old placeholder logo is kept
-at `static/assets/images/logo.svg` but isn't shown.
+The logo is `static/assets/images/logo.svg`. Its five shapes are the five
+fields: water (wave), wood (ground), metal (circle), earth (square) and fire
+(the person). The About page explains it under "Our marks".
 
-When the real logo is ready:
+- **Header:** the logo appears left of the wordmark, about 36px tall, with a
+  thin divider between them. The build copies the SVG *into* each page so the
+  night theme can recolour it. Every colour in the file becomes a CSS
+  variable named after it (e.g. `#2F4A6D` → `--logo-2f4a6d`). The night
+  colours are set in the `THEMES` section of `static/assets/css/style.css`.
+- **Turning it off:** set `"logo": ""` under `"brand"` in `site.json`. The
+  header then shows the wordmark only. Setting it back to `"logo.svg"`
+  restores it on every page.
+- **Replacing it:** save the new file over `logo.svg`, keeping the same
+  name. If the new logo uses different colours, add matching `--logo-…`
+  night colours in `style.css`.
 
-1. Save it in `static/assets/images/`, ideally as a square SVG (a PNG of at
-   least 128×128 pixels also works), e.g. `logo.svg`.
-2. Open `site.json` and fill in the logo's file name under `"brand"`:
-   ```json
-   "brand": {
-     "wordmark": { "en": "Human Alignment Institute", "zh": "人类对齐研究院" },
-     "logo": "logo.svg",
-     "favicon": "favicon.svg"
-   },
-   ```
-   That one line puts the logo in front of the wordmark on every page, in
-   both languages.
-3. To use the logo as the browser-tab icon too, also change `"favicon"` to
-   its file name (or replace `favicon.svg` with a new icon).
-4. Commit. The site rebuilds and the logo appears everywhere.
+**Browser icons** (in `static/assets/images/`):
 
-To remove the logo again, set `"logo": ""`.
+| File | Used for |
+|---|---|
+| `favicon.svg` | browser tab (modern browsers): the logo on a warm-white rounded square, strokes slightly thicker so it reads at 16–32px |
+| `favicon-32.png`, `favicon-192.png`, `favicon-512.png` | older browsers, Android, bookmarks |
+| `apple-touch-icon.png` (180×180) | iPhone/iPad home screen (square; iOS rounds the corners) |
+
+The PNGs were made from `favicon.svg`. If you change the icon, re-export
+them at the same sizes and names with any SVG-to-PNG tool (for example
+realfavicongenerator.net or Figma), then commit.
 
 ### Time-of-day themes, sun and weather
 

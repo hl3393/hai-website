@@ -440,6 +440,20 @@ function contributorsList(lang, root) {
 const layout = read("templates/layout.html");
 const sunScript = read("templates/sun.js").trim();
 
+/* The logo is inlined into each page (not an <img>), so the night theme can
+   recolour it: every colour in the SVG becomes a CSS variable named after
+   it, e.g. #2F4A6D -> var(--logo-2f4a6d, #2F4A6D). See style.css. */
+function inlineLogo(cls, label) {
+  if (!site.brand.logo) return "";
+  let svg = fs.readFileSync(path.join(ROOT_DIR, "static/assets/images", site.brand.logo), "utf8").trim();
+  if (!/^<svg[\s>]/.test(svg)) return `<img class="${cls}" src="assets/images/${esc(site.brand.logo)}" alt="">`;
+  svg = svg
+    .replace(/\s(fill|stroke)="(#[0-9a-fA-F]{6})"/g, (all, prop, hex) => ` style="${prop}: var(--logo-${hex.slice(1).toLowerCase()}, ${hex})"`)
+    .replace(/^<svg\b/, `<svg class="${cls}"${label ? ` role="img" aria-label="${esc(label)}"` : ' aria-hidden="true"'} focusable="false"`)
+    .replace(/\s*\n\s*/g, "");
+  return svg;
+}
+
 function render({ lang, rel, depth, title, description, navKey, content, ogType, switchRel, rootOverride }) {
   const ui = site.ui[lang];
   const other = lang === "en" ? "zh" : "en";
@@ -468,9 +482,7 @@ function render({ lang, rel, depth, title, description, navKey, content, ogType,
     // Header wordmark, and the logo if one is set in site.json ("brand" → "logo")
     WORDMARK_EN: esc(site.brand.wordmark.en),
     WORDMARK_ZH: esc(site.brand.wordmark.zh),
-    BRAND_LOGO: site.brand.logo
-      ? `\n        <img class="brand-logo" src="${root}assets/images/${esc(site.brand.logo)}" alt="" width="32" height="32">`
-      : "",
+    BRAND_LOGO: site.brand.logo ? `\n        ${inlineLogo("brand-logo")}` : "",
     FAVICON: esc(site.brand.favicon || "favicon.svg"),
     OTHER_LANG: site.ui[other].htmlLang,
     MENU: esc(ui.menu),
@@ -551,6 +563,7 @@ for (const lang of LANGS) {
       ALL_VOICES: () => allVoices(lang, root),
       CONTRIBUTORS: () => contributorsList(lang, root),
       EMAIL: () => esc(site.email),
+      LOGO: () => inlineLogo("logo-figure", lang === "zh" ? "人类对齐研究院标志" : "Human Alignment Institute logo"),
       ROOT: () => root,
     };
     const content = body

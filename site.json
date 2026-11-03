@@ -4,7 +4,7 @@
 
   "brand": {
     "wordmark": { "en": "Human Alignment Institute", "zh": "人类对齐研究院" },
-    "logo": "",
+    "logo": "logo.svg",
     "favicon": "favicon.svg"
   },
 

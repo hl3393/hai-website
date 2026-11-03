@@ -72,6 +72,14 @@
   --sky-low: var(--color-bg);
   --shadow: rgba(43, 42, 40, 0.35);
 
+  /* ---- Logo colours (the inlined logo reads these; night overrides below) ---- */
+  --logo-2f4a6d: #2F4A6D;  /* water: the wave */
+  --logo-6e7f4e: #6E7F4E;  /* wood: the ground */
+  --logo-6e747c: #6E747C;  /* metal: the circle */
+  --logo-d9a441: #D9A441;  /* earth: the square */
+  --logo-a6463a: #A6463A;  /* fire: the person */
+  --logo-divider: #ddd8cf;
+
   /* ---- Type & shape ---- */
   --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, Roboto,
     "Helvetica Neue", Arial, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei",
@@ -175,7 +183,9 @@ a.tag, .filters-summary, .footer-grid a, .tb-toggle {
   display: flex; align-items: center; gap: var(--s3); min-height: var(--tap);
   text-decoration: none; color: var(--color-text); line-height: 1.15;
 }
-.brand-logo { width: var(--s6); height: var(--s6); flex-shrink: 0; }
+/* Logo (inlined SVG, about 36px tall), a hairline, then the wordmark */
+.brand-logo { height: 36px; width: auto; flex-shrink: 0; display: block; }
+.brand-logo + .wordmark { padding-left: var(--s3); border-left: 1px solid var(--logo-divider); }
 /* Wordmark: the English name, with the Chinese name below */
 .wordmark { display: flex; flex-direction: column; gap: 2px; }
 .wordmark > span { font-weight: 600; font-size: var(--t-16); letter-spacing: -0.01em; }
@@ -451,6 +461,9 @@ html[lang="zh-Hans"] .question-list li { letter-spacing: 0; }
   font-size: var(--t-14); font-weight: 600; color: var(--color-muted); letter-spacing: 0.04em;
 }
 /* Our marks: the Five Elements list */
+.logo-note { display: flex; gap: var(--s5); align-items: flex-start; margin-top: var(--s6); }
+.logo-figure { width: var(--s8); height: auto; flex-shrink: 0; }
+.logo-note p { margin: 0; }
 .marks-list { list-style: none; padding: 0; margin: var(--s6) 0; }
 .marks-list li { display: flex; gap: var(--s5); align-items: flex-start; padding: var(--s5) 0; border-top: var(--hairline); }
 .marks-list li:last-child { border-bottom: var(--hairline); }
@@ -616,8 +629,8 @@ p.placeholder, div.placeholder, li.placeholder { padding: var(--s1) var(--s2); }
   --footer-bg: #121419; --footer-line: #2f333b; --footer-placeholder: #2c3443; --footer-dot: rgba(255, 255, 255, 0.035);
   --color-placeholder-bg: #2c3443; --color-placeholder-border: #7d8aa0;
   --header-bg: #1b1e25; --sky-low: #1b1e25; --shadow: rgba(0, 0, 0, 0.6);
+  --logo-2f4a6d: #8FAAD0; --logo-6e7f4e: #97A872; --logo-6e747c: #B8BDC4; --logo-a6463a: #D0705F; --logo-divider: #434852;
 }
-:root[data-theme="night"] .brand-logo { filter: brightness(1.6); }
 
 /* Without JavaScript, still respect the system's dark mode */
 @media (prefers-color-scheme: dark) {
@@ -630,6 +643,7 @@ p.placeholder, div.placeholder, li.placeholder { padding: var(--s1) var(--s2); }
     --footer-bg: #121419; --footer-line: #2f333b; --footer-placeholder: #2c3443; --footer-dot: rgba(255, 255, 255, 0.035);
     --color-placeholder-bg: #2c3443; --color-placeholder-border: #7d8aa0;
     --header-bg: #1b1e25; --sky-low: #1b1e25; --shadow: rgba(0, 0, 0, 0.6);
+    --logo-2f4a6d: #8FAAD0; --logo-6e7f4e: #97A872; --logo-6e747c: #B8BDC4; --logo-a6463a: #D0705F; --logo-divider: #434852;
   }
 }
 

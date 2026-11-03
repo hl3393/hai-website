@@ -3,11 +3,17 @@
   "email": "info@humanalignmentinstitute.org",
 
   "fields": {
-    "academia":  { "en": "Academia",      "zh": "学术" },
-    "arts":      { "en": "Arts",          "zh": "艺术" },
-    "industry":  { "en": "Industry",      "zh": "产业" },
-    "education": { "en": "Education",     "zh": "教育" },
-    "everyday":  { "en": "Everyday Life", "zh": "日常生活" }
+    "education": { "en": "Education",                      "zh": "教育" },
+    "arts":      { "en": "Arts & Humanities",              "zh": "艺术与人文" },
+    "science":   { "en": "Science, Technology & Industry", "zh": "科学、技术与产业" },
+    "public":    { "en": "Public & Social Service",        "zh": "公共与社会服务" },
+    "everyday":  { "en": "Work & Everyday Life",           "zh": "劳动与日常生活" }
+  },
+
+  "roles": {
+    "researcher":   { "en": "Researcher",   "zh": "研究者" },
+    "practitioner": { "en": "Practitioner", "zh": "从业者" },
+    "learner":      { "en": "Learner",      "zh": "学习者" }
   },
 
   "types": {
@@ -54,6 +60,7 @@
       "piecesBy": "Pieces",
       "noPieces": "No pieces published yet.",
       "filterField": "Field",
+      "filterRole": "Role",
       "filterType": "Type",
       "all": "All",
       "showing": "Showing {n} of {total}",
@@ -95,6 +102,7 @@
       "piecesBy": "作品",
       "noPieces": "暂无已发布的作品。",
       "filterField": "领域",
+      "filterRole": "身份",
       "filterType": "类型",
       "all": "全部",
       "showing": "显示 {n} / {total} 篇",

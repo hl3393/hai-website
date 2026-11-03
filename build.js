@@ -123,6 +123,37 @@ function videoEmbed(url) {
   return { src: null, host: null };
 }
 
+/* Reads "field: education, arts" into ["education", "arts"] and checks
+   every value against the list in site.json. */
+function parseFields(value, fileLabel) {
+  const list = String(value || "")
+    .split(/[,，、]/)
+    .map((s) => s.trim().toLowerCase())
+    .filter(Boolean);
+  list.forEach((f) => {
+    if (!site.fields[f])
+      errors.push(
+        `${fileLabel}: field "${f}" is unknown. Use one or more of: ${Object.keys(site.fields).join(", ")} (separated by commas)`
+      );
+  });
+  return [...new Set(list)];
+}
+
+/* Reads "role: practitioner" and checks it against site.json. */
+function parseRole(value, fileLabel) {
+  const role = String(value || "").trim().toLowerCase();
+  if (!role) return "";
+  if (/[,，、]/.test(role)) {
+    errors.push(`${fileLabel}: role must be just ONE of: ${Object.keys(site.roles).join(", ")}`);
+    return "";
+  }
+  if (!site.roles[role]) {
+    errors.push(`${fileLabel}: role "${role}" is unknown. Use one of: ${Object.keys(site.roles).join(", ")}`);
+    return "";
+  }
+  return role;
+}
+
 /* --------------------------------------------------------- contributors */
 
 const contributors = {};
@@ -131,13 +162,12 @@ for (const file of listMarkdown("content/contributors")) {
   const { data, body } = parseFrontMatter(read(label_), label_);
   const slug = file.replace(/\.md$/, "");
   if (!data.name) errors.push(`${label_}: missing "name:"`);
-  if (data.field && !site.fields[data.field])
-    errors.push(`${label_}: field "${data.field}" is not listed in site.json`);
   contributors[slug] = {
     slug,
     name: data.name || slug,
     name_zh: data.name_zh || "",
-    field: data.field || "",
+    fields: parseFields(data.field, label_),
+    role: parseRole(data.role, label_),
     photo: data.photo || "placeholder.svg",
     bio: data.bio || stripTags(marked.parse(body || "")),
     bio_zh: data.bio_zh || "",
@@ -182,10 +212,8 @@ for (const file of listMarkdown("content/voices")) {
   }
   if (data.date && !/^\d{4}-\d{2}-\d{2}$/.test(data.date))
     errors.push(`${label_}: date must look like 2026-03-15 (year-month-day)`);
-  if (data.field && !site.fields[data.field])
-    errors.push(
-      `${label_}: field "${data.field}" is unknown. Use one of: ${Object.keys(site.fields).join(", ")}`
-    );
+  const fields = parseFields(data.field, label_);
+  let role = parseRole(data.role, label_);
   if (data.type && !site.types[data.type])
     errors.push(
       `${label_}: type "${data.type}" is unknown. Use one of: ${Object.keys(site.types).join(", ")}`
@@ -198,6 +226,13 @@ for (const file of listMarkdown("content/voices")) {
     errors.push(
       `${label_}: author "${data.author}" has no matching file in content/contributors/ ` +
         `(use the contributor's file name without .md, e.g. "author: jane-doe")`
+    );
+  // If the piece has no "role:", use the role from the author's profile.
+  if (!data.role && author && author.role) role = author.role;
+  if (!role && !data.role)
+    errors.push(
+      `${label_}: missing "role:" (${Object.keys(site.roles).join(", ")}). ` +
+        `Add it to this piece or to the author's profile.`
     );
 
   let video = null;
@@ -214,7 +249,8 @@ for (const file of listMarkdown("content/voices")) {
     title: data.title || slug,
     author,
     date: data.date || "",
-    field: data.field,
+    fields,
+    role,
     type: data.type,
     language: data.language || "en",
     summary: data.summary || truncate(stripTags(html), 160),
@@ -251,14 +287,16 @@ function pageUrl(lang, rel) {
 }
 
 function tags(piece, lang, root, linkTags) {
-  const fieldLabel = esc(label("fields", piece.field, lang));
-  const typeLabel = esc(label("types", piece.type, lang));
   const href = (k, v) => `${root}${prefix(lang)}voices.html?${k}=${v}`;
   const t = (cls, text, k, v) =>
     linkTags
-      ? `<a class="tag ${cls}" href="${href(k, v)}">${text}</a>`
-      : `<span class="tag ${cls}">${text}</span>`;
-  let out = t(`tag--type tag--${piece.type}`, typeLabel, "type", piece.type) + " " + t("", fieldLabel, "field", piece.field);
+      ? `<a class="tag ${cls}" href="${href(k, v)}">${esc(text)}</a>`
+      : `<span class="tag ${cls}">${esc(text)}</span>`;
+  let out = t(`tag--type tag--${piece.type}`, label("types", piece.type, lang), "type", piece.type);
+  if (piece.role) out += " " + t("tag--role", label("roles", piece.role, lang), "role", piece.role);
+  piece.fields.forEach((f) => {
+    out += " " + t("tag--field", label("fields", f, lang), "field", f);
+  });
   if (piece.language !== lang) {
     out += ` <span class="tag tag--lang">${esc(label("languages", piece.language, lang))}</span>`;
   }
@@ -271,7 +309,7 @@ function voiceCard(piece, lang, root) {
   const href = `${root}${prefix(lang)}pieces/${piece.slug}.html`;
   const name = piece.author ? esc(contributorName(piece.author, lang)) : "";
   return `
-      <article class="voice-card voice-card--${piece.type}" data-field="${piece.field}" data-type="${piece.type}">
+      <article class="voice-card voice-card--${piece.type}" data-field="${piece.fields.join(" ")}" data-role="${piece.role}" data-type="${piece.type}">
         <p class="voice-tags">${tags(piece, lang, root, false)}</p>
         <h3 lang="${piece.language === "zh" ? "zh-Hans" : "en"}"><a href="${href}">${esc(piece.title)}</a></h3>
         <p class="voice-summary" lang="${piece.language === "zh" ? "zh-Hans" : "en"}">${esc(piece.summary)}</p>
@@ -301,6 +339,7 @@ function filterBar(lang) {
   return `
     <div class="filters" data-filters hidden>
       ${group("field", ui.filterField, Object.entries(site.fields))}
+      ${group("role", ui.filterRole, Object.entries(site.roles))}
       ${group("type", ui.filterType, Object.entries(site.types))}
       <p class="filter-status" aria-live="polite" data-filter-status data-template="${esc(ui.showing)}"></p>
     </div>`;
@@ -345,7 +384,15 @@ function contributorsList(lang, root) {
         ${avatar(c, root, 112)}
         <div class="contributor-body">
           <h2>${esc(contributorName(c, lang))}${c.sample ? ` <span class="tag tag--sample">${esc(site.ui[lang].sample)}</span>` : ""}</h2>
-          ${c.field ? `<p class="contributor-field">${esc(label("fields", c.field, lang))}</p>` : ""}
+          ${
+            c.role || c.fields.length
+              ? `<p class="contributor-field">${[c.role ? label("roles", c.role, lang) : ""]
+                  .concat(c.fields.map((f) => label("fields", f, lang)))
+                  .filter(Boolean)
+                  .map(esc)
+                  .join(" · ")}</p>`
+              : ""
+          }
           <p lang="${bio.lang === "zh" ? "zh-Hans" : "en"}">${esc(bio.text)}</p>
           <h3>${esc(ui.piecesBy)}</h3>
           ${pieces}

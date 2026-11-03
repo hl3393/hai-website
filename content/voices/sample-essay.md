@@ -2,7 +2,8 @@
 title: [Sample essay] What I will not hand over
 author: sample-contributor-a
 date: 2026-10-20
-field: academia
+field: science, education
+role: researcher
 type: essay
 language: en
 summary: A placeholder essay showing how a long-form piece looks on the site. Replace or delete this file.

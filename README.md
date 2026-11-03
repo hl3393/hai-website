@@ -85,6 +85,7 @@ this author (for example `li-wei.md`)?
      name: Li Wei
      name_zh: 李伟
      field: education
+     role: practitioner
      photo: placeholder.svg
      bio: Middle-school teacher in Chengdu who writes about classrooms and AI.
      bio_zh: 成都的中学教师，关注课堂与 AI。
@@ -108,7 +109,8 @@ this author (for example `li-wei.md`)?
    title: What I keep for myself
    author: li-wei
    date: 2026-11-15
-   field: education
+   field: education, everyday
+   role: practitioner
    type: essay
    language: en
    video:
@@ -128,13 +130,41 @@ this author (for example `li-wei.md`)?
 | `title:` | The title, exactly as it should appear |
 | `author:` | The author's file name in `content/contributors/`, without `.md` |
 | `date:` | Year-month-day, e.g. `2026-11-15` (newest pieces are shown first) |
-| `field:` | `academia`, `arts`, `industry`, `education` or `everyday` |
+| `field:` | **One or more** fields, separated by commas, e.g. `education, public` (see the table below) |
+| `role:` | **One** role: `researcher`, `practitioner` or `learner`. If you leave it out, the role from the author's profile is used |
 | `type:` | `essay`, `blog` or `video` |
 | `language:` | The language the piece is written in: `en` or `zh` |
 | `video:` | Videos only: a YouTube or Vimeo link, e.g. `https://www.youtube.com/watch?v=…` or `https://vimeo.com/123456789` |
 | `summary:` | *Optional.* One sentence shown on the cards. If empty, the first lines of the text are used |
 | `featured:` | *Optional.* `true` pins the piece to the Home page |
 | `draft:` | *Optional.* `true` hides the piece until you're ready |
+
+### Fields and roles: what to type
+
+Every piece has two independent tags: **field** (what area of life it is
+about, one or more) and **role** (the author's position in it, exactly one).
+Readers can filter the Voices page by field, role and type, and combine them.
+
+| Type this after `field:` | Shown on the site as |
+|---|---|
+| `education` | Education |
+| `arts` | Arts & Humanities |
+| `science` | Science, Technology & Industry |
+| `public` | Public & Social Service |
+| `everyday` | Work & Everyday Life |
+
+| Type this after `role:` | Shown on the site as | Use when the author speaks as… |
+|---|---|---|
+| `researcher` | Researcher | someone who studies the subject |
+| `practitioner` | Practitioner | someone who does the work (teacher, artist, nurse, engineer…) |
+| `learner` | Learner | someone learning: a student, or anyone learning something new |
+
+Example: a teacher writing about using AI with students and parents →
+`field: education, public` and `role: practitioner`.
+
+The role is set **per piece** because the same person may write once as a
+researcher and once as a learner. The role in the author's profile is the
+default when a piece doesn't give one.
 
 ### For a video
 
@@ -170,7 +200,7 @@ file and the problem in plain words, e.g.:
 
 ```
 ✗ The site was NOT built. Please fix these problems:
-  • content/voices/my-piece.md: field "music" is unknown. Use one of: academia, arts, industry, education, everyday
+  • content/voices/my-piece.md: field "music" is unknown. Use one or more of: education, arts, science, public, everyday (separated by commas)
 ```
 
 Fix the file on GitHub, commit again, and the site rebuilds.
@@ -202,6 +232,7 @@ Fix the file on GitHub, commit again, and the site rebuilds.
      name: Li Wei
      name_zh: 李伟
      field: education
+     role: practitioner
      photo: placeholder.svg
      bio: Middle-school teacher in Chengdu who writes about classrooms and AI.
      bio_zh: 成都的中学教师，关注课堂与 AI。
@@ -226,7 +257,8 @@ Fix the file on GitHub, commit again, and the site rebuilds.
    title: 我留给自己的东西
    author: li-wei
    date: 2026-11-15
-   field: education
+   field: education, everyday
+   role: practitioner
    type: essay
    language: zh
    video:
@@ -243,7 +275,8 @@ Fix the file on GitHub, commit again, and the site rebuilds.
 | `title:` | 标题，按希望显示的样子填写 |
 | `author:` | 作者在 `content/contributors/` 中的文件名（去掉 `.md`） |
 | `date:` | 年-月-日，例如 `2026-11-15`（最新的作品排在最前） |
-| `field:` | 领域：`academia`（学术）、`arts`（艺术）、`industry`（产业）、`education`（教育）、`everyday`（日常生活） |
+| `field:` | 领域，**可填一个或多个**，用英文逗号分隔，例如 `education, public`（见下表） |
+| `role:` | 身份，**只填一个**：`researcher`、`practitioner` 或 `learner`。不填则使用作者资料中的身份 |
 | `type:` | 类型：`essay`（随笔）、`blog`（博客）、`video`（视频） |
 | `language:` | 作品所用语言：`en`（英文）或 `zh`（中文） |
 | `video:` | 仅视频需要：YouTube 或 Vimeo 链接 |
@@ -251,7 +284,29 @@ Fix the file on GitHub, commit again, and the site rebuilds.
 | `featured:` | *可选。*填 `true` 可将作品固定显示在首页 |
 | `draft:` | *可选。*填 `true` 可暂时隐藏作品 |
 
-**注意：**冒号 `:` 必须是英文半角冒号，`field`、`type`、`language` 的值必须用上表中的英文单词。
+**注意：**冒号 `:` 必须是英文半角冒号；`field`、`role`、`type`、`language` 的值必须用表中的英文单词。
+
+### 领域与身份：填写对照表
+
+每篇作品有两个互相独立的标签：**领域**（作品涉及的生活领域，可多个）和**身份**（作者在其中的身份，仅一个）。读者可在“声音”页面按领域、身份和类型筛选，并可组合使用。
+
+| `field:` 后填写 | 网站显示为 |
+|---|---|
+| `education` | 教育 |
+| `arts` | 艺术与人文 |
+| `science` | 科学、技术与产业 |
+| `public` | 公共与社会服务 |
+| `everyday` | 劳动与日常生活 |
+
+| `role:` 后填写 | 网站显示为 | 适用于作者以……身份发言 |
+|---|---|---|
+| `researcher` | 研究者 | 研究这一主题的人 |
+| `practitioner` | 从业者 | 从事这项工作的人（教师、艺术家、护士、工程师……） |
+| `learner` | 学习者 | 正在学习的人：学生，或任何在学习新事物的人 |
+
+例如：一位教师写她如何与学生和家长一起使用 AI → `field: education, public`，`role: practitioner`。
+
+身份是**按作品**填写的，因为同一个人可能这次以研究者身份写作，下次以学习者身份写作。作品未填写身份时，使用作者资料中的身份。
 
 ### 发布视频
 
@@ -294,7 +349,7 @@ Some words in double braces are filled in automatically, so keep them:
 | Token | Becomes |
 |---|---|
 | `{{LATEST_VOICES}}` | The 3 newest (or `featured`) pieces, on Home |
-| `{{ALL_VOICES}}` | All pieces with the Field / Type filters, on Voices |
+| `{{ALL_VOICES}}` | All pieces with the Field / Role / Type filters, on Voices |
 | `{{CONTRIBUTORS}}` | The list of authors and their pieces, on Contributors |
 | `{{EMAIL}}` | The email address from `site.json` |
 
@@ -314,7 +369,10 @@ carry a yellow "Sample" label. Delete those files once real pieces are in.
 - **Email address:** change `"email"`.
 - **Add a field** (e.g. Health): add a line inside `"fields"`:
   `"health": { "en": "Health", "zh": "健康" },`. It appears in the filters
-  automatically, and pieces can use `field: health`.
+  automatically, and pieces can use `field: health`. Roles (`"roles"`) and
+  types (`"types"`) work the same way.
+- **Rename a field on the site:** change only the `"en"` / `"zh"` text. Keep
+  the short key on the left (e.g. `"science"`), because the content files use it.
 - **Menu labels, footer text:** under `"ui"` → `"en"` / `"zh"`.
 
 `site.json` is strict: keep the quotes and commas exactly as in the

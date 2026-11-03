@@ -2,7 +2,8 @@
 title: [Sample video] Drawing by hand, again
 author: sample-contributor-c
 date: 2026-10-05
-field: arts
+field: arts, everyday
+role: learner
 type: video
 language: en
 # Paste a YouTube or Vimeo link below, for example:

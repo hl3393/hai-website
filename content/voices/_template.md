@@ -6,7 +6,11 @@
 # title:    the title, exactly as it should appear
 # author:   the contributor's file name in content/contributors/ (without .md)
 # date:     year-month-day
-# field:    academia | arts | industry | education | everyday
+# field:    ONE OR MORE, separated by commas:
+#           education | arts | science | public | everyday
+# role:     ONE of: researcher | practitioner | learner
+#           (the author's role in this piece; leave empty to use the role
+#           from the author's profile)
 # type:     essay | blog | video
 # language: en | zh   (the language the piece is written in)
 # video:    only for videos: a YouTube or Vimeo link
@@ -16,7 +20,8 @@
 title: My title
 author: jane-doe
 date: 2026-01-31
-field: education
+field: education, everyday
+role: practitioner
 type: essay
 language: en
 video:

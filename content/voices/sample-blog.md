@@ -2,7 +2,8 @@
 title: 【示例博客】课堂上的第一次“不用 AI”
 author: sample-contributor-b
 date: 2026-10-12
-field: education
+field: education, public
+role: practitioner
 type: blog
 language: zh
 summary: 一篇占位用的中文博客，展示较短、较随意的文章在网站上的样子。请替换或删除此文件。

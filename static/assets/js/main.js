@@ -2,7 +2,7 @@
    Human Alignment Institute — small helper script
    ---------------------------------------------------------
    1. Opens/closes the menu on small screens.
-   2. Filters the Voices page by field and by type.
+   2. Filters the Voices page by field, role and type (combinable).
    3. Fills in the current year in the footer.
    The site still works if JavaScript is turned off
    (the menu stays open and all voices are shown).
@@ -38,11 +38,12 @@
       var buttons = Array.prototype.slice.call(bar.querySelectorAll(".filter-btn"));
       var status = bar.querySelector("[data-filter-status]");
       var empty = document.querySelector("[data-filter-empty]");
-      var state = { field: "all", type: "all" };
+      var groups = ["field", "role", "type"];
+      var state = { field: "all", role: "all", type: "all" };
 
-      // Allow links such as voices.html?field=arts&type=video
+      // Allow links such as voices.html?field=arts&role=learner&type=video
       var params = new URLSearchParams(window.location.search);
-      ["field", "type"].forEach(function (group) {
+      groups.forEach(function (group) {
         var value = params.get(group);
         if (value && bar.querySelector('[data-filter-group="' + group + '"][data-value="' + value + '"]')) {
           state[group] = value;
@@ -52,9 +53,13 @@
       var apply = function (updateUrl) {
         var shown = 0;
         cards.forEach(function (card) {
-          var ok =
-            (state.field === "all" || card.getAttribute("data-field") === state.field) &&
-            (state.type === "all" || card.getAttribute("data-type") === state.type);
+          // A card can have several fields (space-separated), one role and one type.
+          // It is shown only if it matches every chosen filter.
+          var ok = groups.every(function (g) {
+            if (state[g] === "all") return true;
+            var values = (card.getAttribute("data-" + g) || "").split(" ");
+            return values.indexOf(state[g]) !== -1;
+          });
           card.hidden = !ok;
           if (ok) shown++;
         });
@@ -70,8 +75,9 @@
         if (empty) empty.hidden = shown !== 0;
         if (updateUrl && window.history && window.history.replaceState) {
           var q = new URLSearchParams();
-          if (state.field !== "all") q.set("field", state.field);
-          if (state.type !== "all") q.set("type", state.type);
+          groups.forEach(function (g) {
+            if (state[g] !== "all") q.set(g, state[g]);
+          });
           var qs = q.toString();
           window.history.replaceState(null, "", window.location.pathname + (qs ? "?" + qs : ""));
         }

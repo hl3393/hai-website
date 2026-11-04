@@ -34,9 +34,9 @@
   <div class="sky" aria-hidden="true"></div>
   <a class="skip-link" href="#main">{{SKIP}}</a>
 
-  <!-- Top bar: today (date, solar term, moon, weather, sun) and Appearance.
+  <!-- Top bar: today (date, solar term, moon, sunrise/sunset) and Appearance.
        Filled in by assets/js/main.js; hidden when JavaScript is off. -->
-  <div class="topbar is-compact" data-today data-sunrise="{{SUNRISE}}" data-sunset="{{SUNSET}}" data-yours="{{YOUR_LOCATION}}">
+  <div class="topbar is-compact" data-today data-sunrise="{{SUNRISE}}" data-sunset="{{SUNSET}}">
     <div class="container topbar-inner">
       <p class="topbar-left">
         <span class="tb-item" data-today-date></span>
@@ -46,9 +46,7 @@
       <div class="topbar-right">
         <button type="button" class="tb-toggle today-toggle" aria-expanded="false" aria-controls="today-panel">{{TODAY_LABEL}}<svg class="chevron" viewBox="0 0 12 12" aria-hidden="true" focusable="false"><path d="M2.5 4.5 6 8l3.5-3.5" fill="none" stroke="currentColor" stroke-width="1.5"/></svg></button>
         <div class="today-panel" id="today-panel">
-          <span class="tb-item" data-today-place hidden></span>
           <span class="tb-item" data-today-sun hidden></span>
-          <span class="tb-item"><button type="button" class="text-btn" data-locate data-label-on="{{LOCATE_OFF}}" data-label-off="{{LOCATE_ON}}">{{LOCATE_ON}}</button></span>
           <span class="tb-item tb-narrow-only" data-today-term></span>
           <span class="tb-item tb-narrow-only" data-today-moon-name></span>
         </div>

@@ -2,11 +2,10 @@
    Time-of-day theme — inlined into the <head> of every page by build.js,
    so the right colours are there before the page is drawn.
 
-   Where is the visitor? We never ask for location automatically.
-   1. If the visitor clicked "Use my location", their saved coordinates.
-   2. Otherwise their time zone (from the browser) mapped to a
-      representative city in the table ZONES below.
-   3. If the time zone isn't listed, rough sunrise/sunset hours by month.
+   Where is the visitor? Only roughly, and without asking: the browser's
+   time zone is mapped to a representative city in the table ZONES below.
+   That is plenty for colours that change over a 2.5-hour window. If the
+   time zone isn't listed, rough sunrise/sunset hours by month are used.
 
    Sun times use the standard "sunrise equation" (accurate to a few
    minutes), computed locally — nothing is sent anywhere.
@@ -67,13 +66,8 @@
     try { return Intl.DateTimeFormat().resolvedOptions().timeZone || ""; } catch (e) { return ""; }
   }
 
-  // Where we are: {lat, lon, own:true} or {lat, lon, en, zh} or null
+  // Where we roughly are: {lat, lon, en, zh} for the time zone's city, or null
   function place() {
-    if (window.haiOwnPlace) return window.haiOwnPlace; // granted this visit, storage blocked
-    try {
-      var saved = JSON.parse(localStorage.getItem("hai-place") || "null");
-      if (saved && isFinite(saved.lat) && isFinite(saved.lon)) return { lat: +saved.lat, lon: +saved.lon, own: true };
-    } catch (e) {}
     var tz = timeZone(), rows = ZONES.split(";");
     for (var i = 0; i < rows.length; i++) {
       var r = rows[i].split("|");
@@ -132,6 +126,9 @@
   }
 
   function apply() { document.documentElement.setAttribute("data-theme", resolve()); }
+
+  // An earlier version could remember a visitor's exact location; forget it.
+  try { localStorage.removeItem("hai-place"); } catch (e) {}
 
   document.documentElement.className += " js";
 

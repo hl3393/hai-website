@@ -135,6 +135,8 @@ p { margin: 0 0 var(--s4); }
 
 a { color: var(--color-primary); text-underline-offset: 0.2em; text-decoration-thickness: 1px; }
 a:hover { color: var(--color-primary-dark); text-decoration-thickness: 2px; }
+/* Long email addresses may wrap on very narrow screens */
+a[href^="mailto:"] { overflow-wrap: anywhere; }
 
 /* Focus: a precise indigo ring inside a chrome hairline halo */
 :focus-visible {
@@ -421,6 +423,29 @@ html[lang="zh-Hans"] .prose blockquote { letter-spacing: 0; }
 .video-frame--empty p { margin: 0; color: var(--color-muted); padding: var(--s5); text-align: center; }
 .video-link { font-size: var(--t-14); margin-bottom: var(--s7); }
 
+/* Under the byline: series and the other-language version */
+.piece-series, .piece-translation { font-size: var(--t-16); color: var(--color-muted); margin: var(--s2) 0 0; }
+.piece-translation a { display: inline-flex; align-items: center; min-height: var(--tap); font-weight: 500; }
+
+/* Editor's note: quiet, set apart by a thin cognac line */
+.editor-note { margin: 0 0 var(--s7); padding: var(--s1) 0 var(--s1) var(--s5); border-left: 2px solid var(--color-cognac); max-width: var(--measure); }
+.editor-note-label { font-size: var(--t-12); font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--color-muted); margin-bottom: var(--s2); }
+html[lang="zh-Hans"] .editor-note-label { letter-spacing: 0.2em; }
+.editor-note p:last-child { margin: 0; font-size: var(--t-18); line-height: 1.7; }
+
+/* Rights line at the end of a piece */
+.piece-rights { max-width: var(--measure); margin: var(--s7) 0 0; padding-top: var(--s4); border-top: var(--hairline); font-size: var(--t-14); color: var(--color-muted); }
+
+/* Voices: chosen series */
+.series-chip { display: flex; flex-wrap: wrap; align-items: center; gap: var(--s2) var(--s4); margin: 0 0 var(--s5); font-size: var(--t-16); }
+.series-chip[hidden] { display: none; }
+.series-clear { display: inline-flex; align-items: center; min-height: var(--tap); }
+
+/* Plain text pages (Privacy) */
+.prose-page h2 { font-size: var(--t-24); margin-top: var(--s7); }
+.prose-page ul { padding-left: var(--s5); }
+.prose-page li { margin-bottom: var(--s2); }
+
 .author-box { display: flex; gap: var(--s5); align-items: flex-start; margin-top: var(--s8); padding: var(--s6); }
 .author-box h2 { font-size: var(--t-12); text-transform: uppercase; letter-spacing: 0.12em; color: var(--color-muted); margin-bottom: var(--s2); }
 .author-name { font-size: var(--t-20); font-weight: 600; letter-spacing: -0.01em; margin-bottom: var(--s2); }
@@ -517,6 +542,7 @@ p.placeholder, div.placeholder, li.placeholder { padding: var(--s1) var(--s2); }
 .footer-grid p a { display: inline-flex; align-items: center; min-height: var(--tap); }
 .footer-bottom { border-top: 1px solid var(--footer-line); padding-top: var(--s5); font-size: var(--t-12); color: var(--footer-muted); }
 .footer-bottom p { margin: 0 0 var(--s2); }
+.footer-extra a { display: inline-flex; align-items: center; min-height: var(--tap); }
 .site-footer .placeholder { background: var(--footer-placeholder, #3a3936); outline-color: var(--footer-muted); color: var(--footer-text); }
 
 /* ---------- Top bar: today and Appearance ----------

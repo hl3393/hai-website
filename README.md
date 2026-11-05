@@ -166,10 +166,16 @@ this author (for example `li-wei.md`)?
 | `role:` | **One** role: `researcher`, `practitioner` or `learner`. If you leave it out, the role from the author's profile is used |
 | `type:` | `essay`, `blog` or `video` |
 | `language:` | The language the piece is written in: `en` or `zh` |
-| `video:` | Videos only: a YouTube or Vimeo link, e.g. `https://www.youtube.com/watch?v=…` or `https://vimeo.com/123456789` |
+| `video:` | Videos only: a YouTube, Vimeo or Bilibili link, e.g. `https://www.youtube.com/watch?v=…` |
+| `video_cn:` | *Optional, videos only.* A second link, usually Bilibili, for readers in mainland China. The Chinese site plays this one first |
 | `summary:` | *Optional.* One sentence shown on the cards. If empty, the first lines of the text are used |
 | `featured:` | *Optional.* `true` pins the piece to the Home page |
 | `draft:` | *Optional.* `true` hides the piece until you're ready |
+| `translation:` | *Optional.* The file name (without `.md`) of the same piece in the other language. See below |
+| `editor_note:` | *Optional.* A sentence or two from the editor, shown above the piece. `editor_note_zh:` gives the Chinese version |
+| `series:` | *Optional.* A series key from `site.json`, e.g. `first-year` |
+| `license:` | *Optional.* e.g. `CC BY-NC 4.0`, if the author agrees to share the piece under a Creative Commons licence |
+| `rights:` | *Optional.* Replaces the standard rights line at the end of the piece |
 
 ### Fields and roles: what to type
 
@@ -200,9 +206,13 @@ default when a piece doesn't give one.
 
 ### For a video
 
-Set `type: video` and paste the YouTube or Vimeo link after `video:`. The
-player appears at the top of the page automatically. Any text you write below
-the header appears under the video (an introduction or a transcript).
+Set `type: video` and paste the YouTube, Vimeo or Bilibili link after `video:`.
+The player appears at the top of the page automatically. Any text you write
+below the header appears under the video (an introduction or a transcript).
+
+YouTube and Vimeo are usually blocked in mainland China. If the video is also on
+Bilibili, add that link as `video_cn:`. The Chinese site then plays Bilibili,
+the English site plays YouTube, and each offers the other as a link.
 
 ### Formatting the text (Markdown)
 
@@ -221,6 +231,35 @@ the header appears under the video (an introduction or a transcript).
 Every piece is shown on both the English and the Chinese site. Its text
 stays in the language it was written in, and a small "Chinese" or "英文" label
 tells readers which language that is.
+
+### A piece in both languages (translations)
+
+If a piece exists in English and in Chinese, make two files, one per language,
+and add `translation:` to **one** of them, naming the other file:
+
+```
+translation: what-i-keep-zh
+```
+
+The two versions are then linked both ways ("阅读中文版 →" / "Read in
+English →"). The English site lists only the English version, the Chinese site
+only the Chinese one, and the language switch in the menu jumps straight to
+the other version.
+
+### Editor's note, series, rights
+
+- **Editor's note:** `editor_note:` (and `editor_note_zh:`) puts a short note
+  above the piece, set apart by a thin line. Use it to say why you invited the
+  author, or what the piece meant to you.
+- **Series:** first add the series to `site.json` (see *Settings*), then give
+  each piece in it the same `series:` key. The piece shows "Part of: …", and the
+  link opens the Voices page showing only that series.
+- **Rights:** every piece ends with "© year Author. Published by Human
+  Alignment Institute with the author's permission." Add `license: CC BY-NC 4.0`
+  (or another Creative Commons licence) only if the author agreed to it; use
+  `rights:` to write a different line altogether.
+- **Before publishing:** make sure you have the author's permission in
+  writing, an email is enough, including for their photo and bio.
 
 ### If something goes wrong
 
@@ -311,10 +350,16 @@ Fix the file on GitHub, commit again, and the site rebuilds.
 | `role:` | 身份，**只填一个**：`researcher`、`practitioner` 或 `learner`。不填则使用作者资料中的身份 |
 | `type:` | 类型：`essay`（随笔）、`blog`（博客）、`video`（视频） |
 | `language:` | 作品所用语言：`en`（英文）或 `zh`（中文） |
-| `video:` | 仅视频需要：YouTube 或 Vimeo 链接 |
+| `video:` | 仅视频需要：YouTube、Vimeo 或哔哩哔哩链接 |
+| `video_cn:` | *可选，仅视频。*第二个链接，通常是哔哩哔哩，供中国大陆读者观看。中文网站会优先播放它 |
 | `summary:` | *可选。*卡片上显示的一句话简介；留空则自动截取正文开头 |
 | `featured:` | *可选。*填 `true` 可将作品固定显示在首页 |
 | `draft:` | *可选。*填 `true` 可暂时隐藏作品 |
+| `translation:` | *可选。*同一作品另一种语言版本的文件名（去掉 `.md`），见下文 |
+| `editor_note:` | *可选。*编者按（英文），显示在正文上方；`editor_note_zh:` 为中文编者按 |
+| `series:` | *可选。*`site.json` 中的专题代号，例如 `first-year` |
+| `license:` | *可选。*例如 `CC BY-NC 4.0`（仅在作者同意以知识共享协议发布时填写） |
+| `rights:` | *可选。*替换文末默认的版权说明 |
 
 **注意：**冒号 `:` 必须是英文半角冒号；`field`、`role`、`type`、`language` 的值必须用表中的英文单词。
 
@@ -342,9 +387,26 @@ Fix the file on GitHub, commit again, and the site rebuilds.
 
 ### 发布视频
 
-把 `type:` 设为 `video`，在 `video:` 后粘贴 YouTube 或 Vimeo 链接，页面顶部就会自动出现播放器。文件头下面的文字会显示在视频下方，可以写简介或文字稿。
+把 `type:` 设为 `video`，在 `video:` 后粘贴 YouTube、Vimeo 或哔哩哔哩链接，页面顶部就会自动出现播放器。文件头下面的文字会显示在视频下方，可以写简介或文字稿。
 
-（提示：YouTube 和 Vimeo 在中国大陆通常无法直接访问。如果读者主要在国内，可在正文中另附 B 站等平台的链接。）
+YouTube 和 Vimeo 在中国大陆通常无法访问。如果视频也发布在哔哩哔哩，请把那个链接填在 `video_cn:`：中文网站会播放哔哩哔哩版本，英文网站播放 YouTube 版本，并互相提供链接。
+
+### 同一作品的中英两个版本（译本）
+
+如果一篇作品既有中文版又有英文版，请分别建两个文件，并在**其中一个**文件头里加上 `translation:`，填写另一个文件名：
+
+```
+translation: what-i-keep-zh
+```
+
+两个版本会自动互相链接（“阅读中文版 →” / “Read in English →”）。英文网站只列出英文版，中文网站只列出中文版，菜单里的语言切换也会直接跳到另一个版本。
+
+### 编者按、专题与版权
+
+- **编者按：**`editor_note_zh:`（中文）和 `editor_note:`（英文）会在正文上方显示一段简短的编者按，用一条细线隔开。可以写为什么邀请这位作者，或这篇作品打动你的地方。
+- **专题：**先在 `site.json` 中添加专题（见第 6 节），再给专题内每篇作品填上相同的 `series:` 代号。作品页会显示“专题：……”，点击后“声音”页面只显示该专题的作品。
+- **版权：**每篇作品末尾会自动显示“© 年份 作者。经作者授权，由 Human Alignment Institute 发表。”只有在作者同意的情况下才填写 `license: CC BY-NC 4.0` 等知识共享协议；如需完全不同的说明，可用 `rights:` 自行填写。
+- **发表之前：**请确认已获得作者的书面授权（一封邮件即可），包括照片和简介的使用。
 
 ### 正文排版（Markdown）
 
@@ -414,6 +476,16 @@ carry a yellow "Sample" label. Delete those files once real pieces are in.
 - **Rename a field on the site:** change only the `"en"` / `"zh"` text. Keep
   the short key on the left (e.g. `"science"`), because the content files use it.
 - **Menu labels, footer text:** under `"ui"` → `"en"` / `"zh"`.
+- **Series:** add each series under `"series"`, with a short key and its
+  names, e.g.
+  `"series": { "first-year": { "en": "A teacher's first year", "zh": "教师的第一年" } }`.
+  Pieces then use `series: first-year`.
+- **Newsletter:** once you have a newsletter (Buttondown, Substack, Mailchimp
+  and so on), paste its sign-up link into `"newsletter"`. A "Newsletter" link
+  then appears in the footer of every page. Leave it `""` to hide it.
+- **Visit statistics:** see *Deploying* below. When you switch on Cloudflare
+  Web Analytics, set `"analytics": "cloudflare"` so the Privacy page explains it
+  to readers. Keep `"off"` otherwise.
 
 `site.json` is strict: keep the quotes and commas exactly as in the
 surrounding lines (no comma after the last item in a list).
@@ -454,9 +526,9 @@ The PNGs were made from `favicon.svg`. If you change the icon, re-export
 them at the same sizes and names with any SVG-to-PNG tool (for example
 realfavicongenerator.net or Figma), then commit.
 
-### Time-of-day themes, sun and weather
+### Time-of-day themes and the top bar
 
-The site's colours follow the real sun where the visitor is:
+The site's colours follow the sun where the visitor is:
 
 | Theme | When | Look |
 |---|---|---|
@@ -465,43 +537,48 @@ The site's colours follow the real sun where the visitor is:
 | Sunset | 1.5 h before to 1 h after sunset | warm amber / rose-grey |
 | Night | the rest of the night | dark charcoal-indigo |
 
-**How the site knows where the visitor is, without asking:** it reads the
-browser's time zone (e.g. `America/New_York`) and looks up a representative
-city in a table (`ZONES` in `templates/sun.js`). Sunrise and sunset are then
-calculated in the browser with the standard sunrise equation. If the time
-zone isn't in the table, rough sunrise/sunset hours by month are used.
+**Where the visitor is, roughly and without asking:** the browser's time zone
+(e.g. `America/New_York`) is looked up in a table of representative cities
+(`ZONES` in `templates/sun.js`), and sunrise and sunset are calculated in the
+browser. That is plenty for colours that change over a 2.5-hour window. If the
+time zone isn't in the table, rough sunrise/sunset hours by month are used.
+The site never asks for the visitor's location.
 
-**The top bar** (a thin line above the header, on every page) shows the
-date, the solar term (二十四节气), the moon phase, the city with
-current weather (e.g. "New York · 8°C cloudy", from the free
-[Open-Meteo](https://open-meteo.com) service, no key needed), and today's
-sunrise and sunset. The solar term and moon phase are calculated in the
-browser. If the weather can't be loaded, that part simply stays hidden.
-
-When the full row doesn't fit on one line (phones, tablets, narrow windows),
-the bar shows only the date and moon; the rest moves behind a **Today**
-button, and Auto / Light / Dark behind a small sun/moon button.
-
-**"Use my location":** the browser asks for the visitor's exact location
-**only when they click this button**, never automatically. If they agree,
-the exact coordinates are used for weather and sun times, and remembered on
-their device. "Use time-zone city" switches back. If they decline, nothing
-changes.
+**The top bar** (a thin line above the header, on every page) shows the date,
+the solar term (二十四节气), the moon phase and today's sunrise and sunset,
+all calculated in the browser. Nothing is fetched from the internet. When the
+full row doesn't fit on one line (phones, tablets, narrow windows), the bar
+shows only the date and moon; the rest moves behind a **Today** button, and
+Auto / Light / Dark behind a small sun/moon button.
 
 **Appearance:** visitors can pick **Auto / Light / Dark** in the top bar; the
 choice is remembered on their device. With no choice, a device set to dark
 mode gets the night theme.
 
-*Privacy note:* to show the weather, the visitor's browser sends the city's
-coordinates (or, if the visitor chose it, their own) to Open-Meteo. Nothing is
-sent to us.
-
 - Theme colours: the `THEMES` section at the end of `static/assets/css/style.css`.
 - Time zone → city table, sun calculation, fallback hours: `templates/sun.js`.
-- Weather wording, solar terms and moon phases (EN/ZH): `WEATHER`,
-  `SOLAR_TERMS` and `MOON_PHASES` in `static/assets/js/main.js`.
+- Solar terms and moon phases (EN/ZH): `SOLAR_TERMS` and `MOON_PHASES` in
+  `static/assets/js/main.js`.
 - Top bar markup: the top of `templates/layout.html`.
 - Night-time field colours: `"nightColor"` for each field in `site.json`.
+
+### Sharing, feeds and search engines
+
+- **Share images:** `static/assets/images/share-en.png` and `share-zh.png`
+  (1200×630) appear when a page is shared on social media or in messaging
+  apps. Replace them with images of the same size and name if you like.
+- **RSS:** `feed.xml` (English) and `zh/feed.xml` (Chinese) list the newest
+  pieces and are built automatically. They're linked in every page's footer.
+- **Search engines:** each piece carries structured data (title, author,
+  date, language), and `sitemap.xml` is rebuilt every time.
+
+### Privacy
+
+The Privacy page (`pages/en/privacy.html`, `pages/zh/privacy.html`, linked in
+the footer) describes exactly what the site does: no cookies, no tracking, no
+location; only the Appearance choice is remembered. If you add anything that
+changes this (analytics, embeds from new services, a newsletter form on the
+site), update that page too.
 
 ## 8. Deploying on Cloudflare Pages
 
@@ -517,7 +594,12 @@ sent to us.
    `humanalignmentinstitute.org`.
 
 After that, every commit to `main` rebuilds and republishes the site
-automatically in 1–2 minutes. Pages are served without `.html`
+automatically in 1–2 minutes.
+
+**Visit statistics (optional, recommended):** in the Pages project, open
+**Metrics → Web Analytics** and switch it on. It counts visits without
+cookies or personal profiles. Then set `"analytics": "cloudflare"` in
+`site.json` and commit, so the Privacy page tells readers about it. Pages are served without `.html`
 (e.g. `/about`), which is normal.
 
 ## 9. Previewing on your own computer (optional)

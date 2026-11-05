@@ -111,9 +111,13 @@ function label(group, key, lang) {
   return entry ? entry[lang] || entry.en : key;
 }
 
-/* Turns a YouTube / Vimeo address into an embeddable player address. */
+/* Turns a YouTube / Vimeo / Bilibili address into an embeddable player. */
 function videoEmbed(url) {
   if (!url) return null;
+  let b = url.match(/bilibili\.com\/video\/(BV[0-9A-Za-z]{10})/);
+  if (b) return { src: `https://player.bilibili.com/player.html?bvid=${b[1]}&autoplay=0&danmaku=0&high_quality=1`, host: "Bilibili" };
+  b = url.match(/bilibili\.com\/video\/av(\d+)/i);
+  if (b) return { src: `https://player.bilibili.com/player.html?aid=${b[1]}&autoplay=0&danmaku=0&high_quality=1`, host: "Bilibili" };
   let m = url.match(
     /(?:youtube\.com\/(?:watch\?(?:.*&)?v=|embed\/|shorts\/|live\/)|youtu\.be\/)([\w-]{11})/
   );
@@ -121,6 +125,21 @@ function videoEmbed(url) {
   m = url.match(/vimeo\.com\/(?:video\/)?(\d+)/);
   if (m) return { src: `https://player.vimeo.com/video/${m[1]}?dnt=1`, host: "Vimeo" };
   return { src: null, host: null };
+}
+
+/* Creative Commons licences that can be named in a piece's header */
+const LICENSES = {
+  "CC BY 4.0": "https://creativecommons.org/licenses/by/4.0/",
+  "CC BY-SA 4.0": "https://creativecommons.org/licenses/by-sa/4.0/",
+  "CC BY-ND 4.0": "https://creativecommons.org/licenses/by-nd/4.0/",
+  "CC BY-NC 4.0": "https://creativecommons.org/licenses/by-nc/4.0/",
+  "CC BY-NC-SA 4.0": "https://creativecommons.org/licenses/by-nc-sa/4.0/",
+  "CC BY-NC-ND 4.0": "https://creativecommons.org/licenses/by-nc-nd/4.0/",
+};
+
+/* Fills {name} placeholders in a sentence from site.json */
+function fill(template, values) {
+  return String(template).replace(/\{(\w+)\}/g, (all, k) => (k in values ? values[k] : all));
 }
 
 /* Reads "field: education, arts" into ["education", "arts"] and checks
@@ -235,12 +254,22 @@ for (const file of listMarkdown("content/voices")) {
         `Add it to this piece or to the author's profile.`
     );
 
-  let video = null;
+  let video = null, videoCn = null;
   if (data.type === "video") {
     video = videoEmbed(data.video);
     if (data.video && !video.src)
-      warnings.push(`${label_}: could not recognise the video link (YouTube or Vimeo expected).`);
+      warnings.push(`${label_}: could not recognise the video link (YouTube, Vimeo or Bilibili expected).`);
+    videoCn = videoEmbed(data.video_cn);
+    if (data.video_cn && !videoCn.src)
+      warnings.push(`${label_}: could not recognise the video_cn link (a Bilibili link is expected).`);
   }
+  if (data.series && !(site.series || {})[data.series])
+    errors.push(
+      `${label_}: series "${data.series}" is not listed under "series" in site.json` +
+        (Object.keys(site.series || {}).length ? ` (known: ${Object.keys(site.series).join(", ")})` : "")
+    );
+  if (data.license && !LICENSES[data.license])
+    warnings.push(`${label_}: licence "${data.license}" is shown as plain text (known: ${Object.keys(LICENSES).join(", ")}).`);
 
   const html = marked.parse(body || "");
   const piece = {
@@ -256,6 +285,15 @@ for (const file of listMarkdown("content/voices")) {
     summary: data.summary || truncate(stripTags(html), 160),
     videoUrl: data.video || "",
     video,
+    videoCnUrl: data.video_cn || "",
+    videoCn,
+    translationSlug: (data.translation || "").replace(/\.md$/, "").toLowerCase(),
+    translation: null,
+    editorNote: data.editor_note || "",
+    editorNoteZh: data.editor_note_zh || "",
+    series: data.series || "",
+    license: data.license || "",
+    rights: data.rights || "",
     sample: isTrue(data.sample),
     featured: isTrue(data.featured),
     html,
@@ -265,6 +303,29 @@ for (const file of listMarkdown("content/voices")) {
 }
 
 voices.sort((a, b) => (a.date < b.date ? 1 : a.date > b.date ? -1 : 0));
+
+// Translations: "translation: other-file" links two versions of one piece.
+// Only one side needs the line; the link is made in both directions.
+for (const piece of voices) {
+  if (!piece.translationSlug) continue;
+  const other = voices.find((v) => v.slug === piece.translationSlug);
+  if (!other) {
+    errors.push(`${piece.file}: translation "${piece.translationSlug}" has no matching file in content/voices/`);
+    continue;
+  }
+  if (other.language === piece.language) {
+    errors.push(`${piece.file}: its translation "${other.slug}" is in the same language (${piece.language})`);
+    continue;
+  }
+  piece.translation = other;
+  if (!other.translation) other.translation = piece;
+}
+
+/* The pieces to list on the English or Chinese site: when a piece exists in
+   both languages, each site lists only the version in its own language. */
+function listedFor(lang, list) {
+  return (list || voices).filter((p) => !(p.language !== lang && p.translation && p.translation.language === lang));
+}
 
 if (errors.length) {
   console.error("\n✗ The site was NOT built. Please fix these problems:\n");
@@ -323,7 +384,10 @@ function tags(piece, lang, root, linkTags) {
   piece.fields.forEach((f) => {
     out += " " + fieldTag(f, lang, linkTags ? href("field", f) : null);
   });
-  if (piece.language !== lang) {
+  if (piece.translation) {
+    const otherLang = piece.translation.language;
+    out += ` <span class="tag tag--lang">${esc(fill(site.ui[lang].alsoIn, { lang: label("languages", otherLang === lang ? piece.language : otherLang, lang) }))}</span>`;
+  } else if (piece.language !== lang) {
     out += ` <span class="tag tag--lang">${esc(label("languages", piece.language, lang))}</span>`;
   }
   if (piece.sample) out += ` <span class="tag tag--sample">${esc(site.ui[lang].sample)}</span>`;
@@ -335,7 +399,7 @@ function voiceCard(piece, lang, root) {
   const href = `${root}${prefix(lang)}pieces/${piece.slug}.html`;
   const name = piece.author ? esc(contributorName(piece.author, lang)) : "";
   return `
-      <article class="voice-card voice-card--${piece.type}${piece.fields[0] ? ` voice-card--f-${piece.fields[0]}` : ""}" data-field="${piece.fields.join(" ")}" data-role="${piece.role}" data-type="${piece.type}">
+      <article class="voice-card voice-card--${piece.type}${piece.fields[0] ? ` voice-card--f-${piece.fields[0]}` : ""}" data-field="${piece.fields.join(" ")}" data-role="${piece.role}" data-type="${piece.type}" data-series="${piece.series}">
         ${piece.fields[0] ? fieldMark(piece.fields[0], "card-mark") : ""}
         <p class="voice-tags">${tags(piece, lang, root, false)}</p>
         <h3 lang="${piece.language === "zh" ? "zh-Hans" : "en"}"><a href="${href}">${esc(piece.title)}</a></h3>
@@ -379,16 +443,28 @@ function filterBar(lang) {
     </details>`;
 }
 
+/* "Series: …  ×" — shown on the Voices page when a link asks for one series
+   (voices.html?series=key). main.js reveals the matching chip. */
+function seriesChips(lang) {
+  const entries = Object.entries(site.series || {});
+  if (!entries.length) return "";
+  return entries
+    .map(([key, s]) => `<p class="series-chip" data-series-chip="${key}" hidden><span>${esc(site.ui[lang].seriesLabel)}: <strong>${esc(s[lang] || s.en)}</strong></span> <a href="voices.html" class="series-clear">${esc(site.ui[lang].showAll)}</a></p>`)
+    .join("\n    ");
+}
+
 function allVoices(lang, root) {
   const ui = site.ui[lang];
   return `${filterBar(lang)}
-    ${voiceGrid(voices, lang, root, " data-filter-list")}
+    ${seriesChips(lang)}
+    ${voiceGrid(listedFor(lang), lang, root, " data-filter-list")}
     <p class="filter-empty" data-filter-empty hidden>${esc(ui.empty)}</p>`;
 }
 
 function latestVoices(lang, root) {
-  const featured = voices.filter((v) => v.featured);
-  const list = (featured.length ? featured : voices).slice(0, 3);
+  const listed = listedFor(lang);
+  const featured = listed.filter((v) => v.featured);
+  const list = (featured.length ? featured : listed).slice(0, 3);
   return voiceGrid(list, lang, root);
 }
 
@@ -405,8 +481,9 @@ function contributorsList(lang, root) {
   return `<div class="contributor-list">${list
     .map((c) => {
       const bio = contributorBio(c, lang);
-      const pieces = c.pieces.length
-        ? `<ul class="piece-list">${c.pieces
+      const own = listedFor(lang, c.pieces);
+      const pieces = own.length
+        ? `<ul class="piece-list">${own
             .map(
               (p) =>
                 `<li><a href="${root}${prefix(lang)}pieces/${p.slug}.html" lang="${p.language === "zh" ? "zh-Hans" : "en"}">${esc(p.title)}</a> <span class="piece-list-meta">${esc(label("types", p.type, lang))} · <time datetime="${p.date}">${formatDate(p.date, lang)}</time></span></li>`
@@ -454,7 +531,20 @@ function inlineLogo(cls, label) {
   return svg;
 }
 
-function render({ lang, rel, depth, title, description, navKey, content, ogType, switchRel, rootOverride }) {
+function shareImage(lang) { return lang === "zh" ? "share-zh.png" : "share-en.png"; }
+
+function organization() {
+  return {
+    "@type": "Organization",
+    name: site.brand.wordmark.en,
+    alternateName: site.brand.wordmark.zh,
+    url: site.domain + "/",
+    email: site.email,
+    logo: `${site.domain}/assets/images/favicon-512.png`,
+  };
+}
+
+function render({ lang, rel, depth, title, description, navKey, content, ogType, switchRel, rootOverride, jsonld }) {
   const ui = site.ui[lang];
   const other = lang === "en" ? "zh" : "en";
   const root = rootOverride || "../".repeat(depth);
@@ -474,6 +564,14 @@ function render({ lang, rel, depth, title, description, navKey, content, ogType,
     URL_EN: pageUrl("en", rel),
     URL_ZH: pageUrl("zh", rel),
     OG_TYPE: ogType || "website",
+    OG_IMAGE: `${site.domain}/assets/images/${shareImage(lang)}`,
+    OG_LOCALE: lang === "zh" ? "zh_CN" : "en_US",
+    FEED_HREF: `${rootOverride || "../".repeat(depth)}${prefix(lang)}feed.xml`,
+    FEED_TITLE: esc(ui.feedTitle),
+    STRUCTURED_DATA: jsonld
+      ? `<script type="application/ld+json">${JSON.stringify(jsonld).replace(/</g, "\\u003c")}</script>`
+      : "",
+    ANALYTICS: "",
     ROOT: root,
     SKIP: esc(ui.skip),
     HOME_HREF: `${root}${prefix(lang)}index.html`,
@@ -506,6 +604,12 @@ function render({ lang, rel, depth, title, description, navKey, content, ogType,
     FOOTER_CONTACT: esc(ui.footerContact),
     EMAIL: esc(site.email),
     FOOTER_LEGAL: ui.footerLegal,
+    // Privacy · RSS · Newsletter (the newsletter link appears once set in site.json)
+    FOOTER_EXTRA: [
+      `<a href="${root}${prefix(lang)}privacy.html">${esc(ui.privacy)}</a>`,
+      `<a href="${root}${prefix(lang)}feed.xml">RSS</a>`,
+      site.newsletter ? `<a href="${esc(site.newsletter)}">${esc(ui.newsletter)}</a>` : "",
+    ].filter(Boolean).join(" · "),
     YEAR: String(new Date().getFullYear()),
     COPYRIGHT: esc(ui.copyright),
     CONTENT: content,
@@ -562,6 +666,8 @@ for (const lang of LANGS) {
       EMAIL: () => esc(site.email),
       LOGO: () => inlineLogo("logo-figure", lang === "zh" ? "人类对齐研究院标志" : "Human Alignment Institute logo"),
       ROOT: () => root,
+      // Privacy page: a paragraph about visit statistics, only when switched on
+      ANALYTICS_NOTE: () => (site.analytics === "cloudflare" ? site.ui[lang].analyticsNote : ""),
     };
     const content = body
       .replace(/\{\{MARK:([a-z-]+)\}\}/g, (all, f) => (site.fields[f] ? fieldMark(f, "mark--lg") : all))
@@ -579,9 +685,10 @@ for (const lang of LANGS) {
         content,
         switchRel: otherExists ? file : "index.html",
         rootOverride: is404 ? "/" : null,
+        jsonld: file === "index.html" ? { "@context": "https://schema.org", ...organization(), description: site.ui[lang].tagline } : null,
       })
     );
-    if (!is404) sitemap.push(pageUrl(lang, file));
+    if (!is404 && !data.noindex) sitemap.push(pageUrl(lang, file));
   }
 }
 
@@ -596,24 +703,65 @@ for (const piece of voices) {
     const c = piece.author;
     const contributorsHref = `${root}${prefix(lang)}contributors.html`;
 
+    // Video: the Chinese site prefers the Bilibili version (video_cn),
+    // the English site the main link; the other is offered as a link.
     let video = "";
     if (piece.type === "video") {
-      if (piece.video && piece.video.src) {
+      const a = { v: piece.video, url: piece.videoUrl }, b = { v: piece.videoCn, url: piece.videoCnUrl };
+      const [main, alt] = lang === "zh" && b.v && b.v.src ? [b, a] : a.v && a.v.src ? [a, b] : [b, a];
+      if (main.v && main.v.src) {
         video = `
         <div class="video-frame">
-          <iframe src="${piece.video.src}" title="${esc(ui.videoTitle)}: ${esc(piece.title)}" loading="lazy"
+          <iframe src="${main.v.src}" title="${esc(ui.videoTitle)}: ${esc(piece.title)}" loading="lazy"
             allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen"
             allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>
         </div>
-        <p class="video-link"><a href="${esc(piece.videoUrl)}">${esc(ui.watch)} → ${piece.video.host}</a></p>`;
-      } else if (piece.videoUrl) {
-        video = `<p class="video-link"><a href="${esc(piece.videoUrl)}">${esc(ui.watch)} →</a></p>`;
+        <p class="video-link"><a href="${esc(main.url)}">${esc(ui.watch)} → ${main.v.host}</a>${
+          alt.v && alt.v.src ? ` · <a href="${esc(alt.url)}">${esc(fill(ui.alsoOn, { host: alt.v.host }))}</a>` : ""
+        }</p>`;
+      } else if (piece.videoUrl || piece.videoCnUrl) {
+        video = `<p class="video-link"><a href="${esc(piece.videoUrl || piece.videoCnUrl)}">${esc(ui.watch)} →</a></p>`;
       } else {
         video = `<div class="video-frame video-frame--empty"><p>${esc(ui.videoMissing)}</p></div>`;
       }
     }
 
-    const more = c ? c.pieces.filter((p) => p !== piece).slice(0, 3) : [];
+    // Editor's note (in the site's language when both are given)
+    const note = lang === "zh" ? piece.editorNoteZh || piece.editorNote : piece.editorNote || piece.editorNoteZh;
+    const noteLang = note === piece.editorNoteZh && piece.editorNoteZh ? "zh-Hans" : "en";
+    const editorNote = note
+      ? `
+        <aside class="editor-note" aria-label="${esc(ui.editorNote)}">
+          <p class="editor-note-label">${esc(ui.editorNote)}</p>
+          <p lang="${noteLang}">${esc(note)}</p>
+        </aside>`
+      : "";
+
+    // The other language version, if there is one
+    const t = piece.translation;
+    const translationLink = t
+      ? `<p class="piece-translation"><a href="${root}${prefix(lang)}pieces/${t.slug}.html" hreflang="${t.language === "zh" ? "zh-Hans" : "en"}" lang="${t.language === "zh" ? "zh-Hans" : "en"}">${esc(site.readIn[t.language])} →</a></p>`
+      : "";
+
+    // Series
+    const series = piece.series && site.series[piece.series];
+    const seriesLine = series
+      ? `<p class="piece-series">${esc(ui.partOf)}: <a href="${root}${prefix(lang)}voices.html?series=${piece.series}">${esc(series[lang] || series.en)}</a></p>`
+      : "";
+
+    // Rights and licence, at the end of the piece
+    const year = (piece.date || "").slice(0, 4);
+    const authorName = c ? contributorName(c, lang) : "";
+    const rights =
+      `<p class="piece-rights">${esc(piece.rights || fill(ui.rights, { year, author: authorName }))}` +
+      (piece.license
+        ? ` ${LICENSES[piece.license]
+            ? fill(esc(ui.licensed), { license: `<a href="${LICENSES[piece.license]}" rel="license">${esc(piece.license)}</a>` })
+            : esc(fill(ui.licensed, { license: piece.license }))}`
+        : "") +
+      `</p>`;
+
+    const more = c ? listedFor(lang, c.pieces).filter((p) => p !== piece && p !== piece.translation).slice(0, 3) : [];
     const authorBox = c
       ? `
       <aside class="author-box" aria-labelledby="about-author">
@@ -640,12 +788,15 @@ for (const piece of voices) {
           <p class="voice-tags">${tags(piece, lang, root, true)}</p>
           <h1 lang="${pieceLang}">${esc(piece.title)}</h1>
           <p class="piece-byline">${c ? `${ui.by}<a href="${contributorsHref}#${c.slug}">${esc(contributorName(c, lang))}</a> · ` : ""}<time datetime="${piece.date}">${formatDate(piece.date, lang)}</time></p>
+          ${seriesLine}
+          ${translationLink}
         </div>
       </header>
-      <div class="container container--narrow piece-body">${video}
+      <div class="container container--narrow piece-body">${editorNote}${video}
         <div class="prose" lang="${pieceLang}">
 ${piece.html}
         </div>
+        ${rights}
 ${authorBox}
         <p class="back-link"><a href="${root}${prefix(lang)}voices.html">${esc(ui.backToVoices)}</a></p>
       </div>
@@ -662,6 +813,22 @@ ${authorBox}
         navKey: "voices",
         content,
         ogType: "article",
+        // The language switch goes to the translation when there is one
+        switchRel: piece.translation ? `pieces/${piece.translation.slug}.html` : rel,
+        jsonld: {
+          "@context": "https://schema.org",
+          "@type": piece.type === "video" ? "VideoObject" : "Article",
+          [piece.type === "video" ? "name" : "headline"]: piece.title,
+          description: piece.summary,
+          inLanguage: piece.language === "zh" ? "zh-Hans" : "en",
+          datePublished: piece.date,
+          uploadDate: piece.type === "video" ? piece.date : undefined,
+          thumbnailUrl: piece.type === "video" ? `${site.domain}/assets/images/${shareImage(lang)}` : undefined,
+          author: c ? { "@type": "Person", name: c.name } : undefined,
+          publisher: organization(),
+          url: pageUrl(lang, rel),
+          license: LICENSES[piece.license],
+        },
       })
     );
     sitemap.push(pageUrl(lang, rel));
@@ -677,6 +844,40 @@ ${sitemap.map((u) => `  <url><loc>${u}</loc></url>`).join("\n")}
 </urlset>
 `
 );
+
+// 4. RSS feeds, one per site language (feed.xml and zh/feed.xml)
+const xml = (s) => esc(s).replace(/'/g, "&apos;");
+for (const lang of LANGS) {
+  const ui = site.ui[lang];
+  const items = listedFor(lang).slice(0, 30);
+  write(
+    prefix(lang) + "feed.xml",
+    `<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:dc="http://purl.org/dc/elements/1.1/">
+<channel>
+  <title>${xml(ui.feedTitle)}</title>
+  <link>${pageUrl(lang, "voices.html")}</link>
+  <atom:link href="${site.domain}/${prefix(lang)}feed.xml" rel="self" type="application/rss+xml"/>
+  <description>${xml(ui.tagline)}</description>
+  <language>${lang === "zh" ? "zh-cn" : "en"}</language>
+${items
+  .map((p) => {
+    const url = pageUrl(lang, `pieces/${p.slug}.html`);
+    return `  <item>
+    <title>${xml(p.title)}</title>
+    <link>${url}</link>
+    <guid isPermaLink="true">${url}</guid>
+    <pubDate>${new Date(p.date + "T12:00:00Z").toUTCString()}</pubDate>
+    ${p.author ? `<dc:creator>${xml(contributorName(p.author, lang))}</dc:creator>` : ""}
+    <description>${xml(p.summary)}</description>
+  </item>`;
+  })
+  .join("\n")}
+</channel>
+</rss>
+`
+  );
+}
 
 warnings.forEach((w) => console.warn("  ! " + w));
 console.log(

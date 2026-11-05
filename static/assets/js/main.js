@@ -42,6 +42,10 @@
       var empty = document.querySelector("[data-filter-empty]");
       var groups = ["field", "role", "type"];
       var state = { field: "all", role: "all", type: "all" };
+      // A series is chosen only by link (voices.html?series=key), shown as a chip
+      var series = new URLSearchParams(window.location.search).get("series") || "";
+      var chip = series ? document.querySelector('[data-series-chip="' + series + '"]') : null;
+      if (chip) chip.hidden = false; else series = "";
 
       // Allow links such as voices.html?field=arts&role=learner&type=video
       var params = new URLSearchParams(window.location.search);
@@ -61,7 +65,7 @@
             if (state[g] === "all") return true;
             var values = (card.getAttribute("data-" + g) || "").split(" ");
             return values.indexOf(state[g]) !== -1;
-          });
+          }) && (!series || card.getAttribute("data-series") === series);
           card.hidden = !ok;
           if (ok) shown++;
         });
@@ -80,6 +84,7 @@
           groups.forEach(function (g) {
             if (state[g] !== "all") q.set(g, state[g]);
           });
+          if (series) q.set("series", series);
           var qs = q.toString();
           window.history.replaceState(null, "", window.location.pathname + (qs ? "?" + qs : ""));
         }
